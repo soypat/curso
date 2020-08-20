@@ -11,6 +11,15 @@
   translation: "Temas"
 - id: app-login
   translation: "Iniciar sesión"
+- id: app-request-login
+  translation: "Iniciar sesión"
+- id: app-login-title
+  translation: "Foros ITBA - Inicio de sesión"
+- id: app-login-detail
+  translation: "Para participar del foro es necesario estar registrado con un proveedor"
+- id: app-login-choose
+  translation: "Eliga su proveedor de la lista"
+
 # Admin stuff
 - id: new-forum
   translation: "Nuevo foro"
@@ -23,21 +32,15 @@
 - id: new-forum-access-help
   translation: "Nivel de acceso. 0 es público. 1 es solo moderadores."
 
-- id: placeholder
-  translation: "placeholder"
-- id: placeholder
-  translation: "placeholder"
-- id: placeholder
-  translation: "placeholder"
-- id: placeholder
-  translation: "placeholder"
-- id: placeholder
-  translation: "placeholder"
 # FORUM
 - id: forum-name
   translation: "Nombre del foro"
 - id: no-forums-found
   translation: "No se encontraron foros"
+- id: forum-invalid-title
+  translation: "Título de foro debería consistir de caracteres alfanuméricos y '-', '_'"
+- id: topic-delete-popup
+  translation: "Eliminar tema {{.title}} ?"
 
 # CATEGORY
 - id: category-category
@@ -56,20 +59,59 @@
   translation: "Respuestas"
 - id: category-no-topics-found
   translation: "Sé el primero en postear un tema!"
+- id: category-invalid-title
+  translation: "Título de categoría debería consistir de caracteres alfanuméricos y '-', '_'"
 
 # TOPIC
-- id: new-topic
+- id: topic-author-intro
+  translation: "Publicado por"
+- id: new-topic-headline
   translation: "Nuevo tema"
+- id: edit-topic-headline
+  translation: "Editar tema"
 - id: new-topic-content-help
   translation: "Contenido a postear. Soporta markdown"
 - id: new-topic-title-help
   translation: "Nombre descriptivo del tema."
 - id: new-topic-content-placeholder
   translation: |
-    * Bullet point, `código`, *negrita*,
+    * Bullet point, `código`, **negrita**, *cursiva*
     ```
     bloque de código
     ```
+# TOPIC BUTTONS AND FLASH
+- id: topic-edit
+  translation: " "
+- id: topic-delete
+  translation: " "
+- id: topic-reply
+  translation: " "
+- id: topic-delete-msg
+  translation: "Eliminar {{.title}}"
+- id: topic-close
+  translation: "Cerrar"
+- id: topic-not-found
+  translation: "No se encontró ese tema"
+- id: topic-add-success
+  translation: "Se creó el tema correctamente"
+- id: topic-edit-success
+  translation: "Se editó el tema correctamente"
+
+# REPLY
+- id: reply-reply
+  translation: "Responder"
+- id: reply-send
+  translation: "Enviar"
+- id: reply-delete
+  translation: "Eliminar"
+- id: reply-cancel
+  translation: "Cancelar"
+- id: reply-delete-msg
+  translation: "¿Está seguro que quiere borrar la respuesta?"
+- id: reply-edit-success
+  translation: "Se editó la respuesta correctamente"
+- id: reply-create-success
+  translation: "Respuesta agregada"
 
 # direct translations
 - id: description

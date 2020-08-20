@@ -6,6 +6,7 @@ import (
   "github.com/gobuffalo/buffalo/render"
     "github.com/gobuffalo/plush"
     "github.com/soypat/curso/models"
+    "html/template"
     "math"
     "strings"
     "time"
@@ -32,6 +33,10 @@ func init() {
           "timeSince": timeSince,
           "joinPath": joinPath,
           "displayName": displayName,
+          "derefUser":derefUser,
+          "csrf": func() template.HTML {
+              return template.HTML("<input name=\"authenticity_token\" value=\"<%= authenticity_token %>\" type=\"hidden\">")
+          },
       },
   })
 }
@@ -46,18 +51,19 @@ func joinPath(sli ...string) string {
     return strings.Join(sli,"/") +"/"
 }
 
-func displayName(user models.User) string {
+func displayName(user *models.User) string {
     if user.Nick != "" {
         return user.Nick
     }
     return user.Name
 }
+func derefUser(u models.User) *models.User {return &u}
 
 func timeSince(created time.Time, ctx plush.HelperContext) string {
     if true && false {
         return created.UTC().Format(time.RFC3339)
     }
-    now := time.Now().UTC()
+    now := time.Now().UTC().Add(-time.Hour * hourDiffUTC)
     delta := now.Sub(created.UTC())
     days := int(math.Abs(delta.Hours()) / 24)
     if days > 30 {

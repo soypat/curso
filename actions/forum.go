@@ -25,7 +25,7 @@ func SetCurrentForum(next buffalo.Handler) buffalo.Handler {
 		err := q.First(forum)
 		if err != nil {
 			c.Flash().Add("danger","Error while seeking forum")
-			return c.Redirect(500,"/")
+			return c.Redirect(404,"/")
 		}
 		c.Set("inForum",true)
 		c.Set("forum", forum)
@@ -124,6 +124,6 @@ func getFormFile(c buffalo.Context, key string) (*[]byte, error) {
 }
 
 func validURLDir(name string) bool {
-	re := regexp.MustCompile(fmt.Sprintf(`[a-zA-Z\-_]{%d}`,len(name)))
+	re := regexp.MustCompile(fmt.Sprintf(`[0-9a-zA-Z\-_]{%d}`,len(name)))
 	return re.MatchString(name)
 }

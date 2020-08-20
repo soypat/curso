@@ -17,9 +17,10 @@ func TopicGet(c buffalo.Context) error {
 	if err != nil {
 		return c.Redirect(302,"catPath()", renderData)
 	}
-	return c.Render(200, "")
+	c.Set("topic",topic)
+	return c.Render(200, r.HTML("topics/get.plush.html"))
 
-	return c.Redirect(200,"topicGetPath()", renderData)//c.Render(200,r.HTML("topics/index.plush.html"))
+	//return c.Redirect(200,"topicGetPath()", renderData)//c.Render(200,r.HTML("topics/index.plush.html"))
 }
 
 func TopicCreateGet(c buffalo.Context) error {
@@ -37,7 +38,7 @@ func TopicCreatePost(c buffalo.Context) error {
 	q  := tx.Where("title = ?", c.Param("cat_title"))
 	err := q.First(cat)
 	if err != nil {
-		c.Flash().Add("danger","Error while seeking category")
+		c.Flash().Add("dange+r","Error while seeking category")
 		return c.Redirect(302,"forumPath()")
 	}
 	topic.Category = cat
@@ -60,14 +61,42 @@ func TopicCreatePost(c buffalo.Context) error {
 	//}
 	f := c.Value("forum").(*models.Forum)
 	c.Logger().Info("TopicCreatePost finished success")
-	c.Flash().Add("success", "New topic added successfully.")
-	return c.Redirect(302, "fCPath()",render.Data{"forum_title":f.Title,"cat_title":cat.Title})
+	c.Flash().Add("success", T.Translate(c,"topic-add-success"))
+	return c.Redirect(302, "catPath()",render.Data{"forum_title":f.Title,"cat_title":cat.Title})
 	//return c.Render(200,r.HTML("topics/create.plush.html"))
 }
 
+func TopicEditGet(c buffalo.Context) error {
+	return c.Render(200, r.HTML("topics/create.plush.html"))
+}
 
+func TopicEditPost(c buffalo.Context) error {
+	topic := c.Value("topic").(*models.Topic)
+	tx := c.Value("tx").(*pop.Connection)
+	if err := c.Bind(topic); err != nil {
+		return errors.WithStack(err)
+	}
+	if err := tx.Update(topic); err != nil {
+		return errors.WithStack(err)
+	}
+	c.Flash().Add("success", T.Translate(c,"topic-edit-success"))
+	f := c.Value("forum").(*models.Forum)
+	return c.Redirect(302, "topicGetPath()",render.Data{"forum_title":f.Title,
+		"cat_title":c.Param("cat_title"),"tid":c.Param("tid")})
+}
 
-
+func SetCurrentTopic(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+		//topic := &models.Topic{}
+		topic, err := loadTopic(c,c.Param("tid"))
+		if err != nil {
+			c.Flash().Add("danger",T.Translate(c,"topic-not-found"))
+			return c.Render(404,r.HTML("meta/404.plush.html"))
+		}
+		c.Set("topic",topic)
+		return next(c)
+	}
+}
 
 func loadTopic(c buffalo.Context, tid string) (*models.Topic, error) {
 	tx := c.Value("tx").(*pop.Connection)

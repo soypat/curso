@@ -55,7 +55,8 @@ func CategoriesCreatePost(c buffalo.Context) error {
 	}
 	c.Logger().Printf("T %s %s", cat.Title, cat.Description)
 	if !validURLDir(cat.Title) {
-		c.Flash().Add("danger", "Category title should contain url safe characters (A-Z,a-z,-,_)")
+
+		c.Flash().Add("danger", T.Translate(c,"category-invalid-title"))
 		return c.Redirect(302, "")
 	}
 	f := c.Value("forum").(*models.Forum)

@@ -13,7 +13,7 @@ type Reply struct {
     ID uuid.UUID `json:"id" db:"id"`
     AuthorID uuid.UUID `json:"author_id" db:"author_id"`
     TopicID uuid.UUID `json:"topic_id" db:"topic_id"`
-    Content string `json:"content" db:"content"`
+    Content string `json:"content" db:"content" form:"content"`
     Deleted bool `json:"deleted" db:"deleted"`
     CreatedAt time.Time `json:"created_at" db:"created_at"`
     UpdatedAt time.Time `json:"updated_at" db:"updated_at"`

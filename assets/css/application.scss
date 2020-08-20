@@ -1,4 +1,10 @@
 @import "~bootstrap/scss/bootstrap.scss";
-@import "~@fortawesome/fontawesome-free/css/all.min.css";
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
 
 @import "buffalo";
+
+.img-circle {
+	border-radius: 50%;
+	width: 50px;
+}

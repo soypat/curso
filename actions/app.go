@@ -22,6 +22,7 @@ var ENV = envy.Get("GO_ENV", "development")
 var app *buffalo.App
 var T *i18n.Translator
 
+const hourDiffUTC = 3 // how many hours behind is UTC respect to current time. Argentina == 3h
 // App is where all routes and middleware for buffalo
 // should be defined. This is the nerve center of your
 // application.
@@ -72,39 +73,42 @@ func App() *buffalo.App {
 		//auth.Middleware.Skip(SetCurrentUser,bah, AuthCallback) // set current user needs to seek user in db. if no users present in db setcurrentuser fails
 		auth.DELETE("", AuthDestroy)
 
-		// TODO add authorization and admin auth
 		// home page setup
-		app.GET("/", manageForum)
-		//app.Use(SetCurrentForum)
+		app.GET("/", manageForum) //TODO change homepage
 		app.GET("/f", NotFound)
+
 		forum := app.Group("/f/{forum_title}")
 		forum.Use(SetCurrentForum)
 		forum.GET("/", forumIndex).Name("forum")
 		forum.GET("/create",CategoriesCreateGet).Name("catCreate")
 		forum.POST("/create",CategoriesCreatePost)
-		//forum.GET("/c/{cat_title}/", CategoriesIndex)
-		//forum.GET("/c/{cat_title}/new", TopicCreateGet )
-		//forum.POST("/c/{cat_title}/new", TopicCreatePost )
+
 		catGroup := forum.Group("/c/{cat_title}")
 		catGroup.Use(SetCurrentCategory)
 		catGroup.GET("/", CategoriesIndex).Name("cat")
 		catGroup.GET("/createTopic",TopicCreateGet).Name("topicCreate")
 		catGroup.POST("/createTopic",TopicCreatePost)
 
+
 		topicGroup := catGroup.Group("/{tid}")
-
+		topicGroup.Use(SetCurrentTopic)
 		topicGroup.GET("/",TopicGet).Name("topicGet") //
+		topicGroup.GET("/edit", TopicEditGet).Name("topicEdit")
+		topicGroup.POST("/edit", TopicEditPost)
+		topicGroup.GET("/reply", ReplyGet).Name("reply")
+		topicGroup.POST("/reply",ReplyPost)
 
-		//topicGroup.GET("/create",TopicCreateGet)
-		//catGroup.GET("/create", CategoriesCreateGet)
-		//catGroup.POST("/create", CategoriesCreatePost)
-		//catGroup.GET("/detail", CategoriesDetail)
+		replyGroup := topicGroup.Group("/{rid}")
+		replyGroup.Use(SetCurrentReply)
+		replyGroup.GET("/edit", editReplyGet).Name("replyEdit")
+		replyGroup.POST("/edit",editReplyPost)
+		replyGroup.DELETE("/edit",DeleteReply)
+
 
 		admin := app.Group("/admin")
 		admin.Use(SiteStruct)
 		admin.GET("/f", manageForum)
 		admin.GET("newforum",createForum)
-		//admin.GET("newforum/post", createForumPost)
 		admin.POST("newforum/post", createForumPost)
 
 		app.ServeFiles("/", assetsBox) // serve files from the public directory

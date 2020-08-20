@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>Foros ITBA</title>
     <%= stylesheetTag("application.css") %>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <meta name="csrf-param" content="authenticity_token"/>
     <meta name="csrf-token" content="<%= authenticity_token %>"/>
     <link rel="icon" href="<%= assetPath("images/logo-curso.png") %>">
@@ -61,9 +62,6 @@
                 <% } else { %>
                 <li class="nav-item">
                     <a href="<%= auth_path %>" class="nav-link"><%= t("app-login") %></a>
-                </li>
-                <li class="nav-item">
-                    <a href="<%= auth_path %>" class="nav-link"><%= t("app-register") %></a>
                 </li>
                 <% } %>
             </ul>

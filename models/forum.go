@@ -3,7 +3,7 @@ package models
 import (
 	"encoding/base64"
 	"encoding/json"
-	"github.com/gobuffalo/pop/slices"
+	"github.com/gobuffalo/pop/v5/slices"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gofrs/uuid"
@@ -14,13 +14,15 @@ import (
 // Forum is used by pop to map your forums database table to your go code.
 type Forum struct {
 	ID          uuid.UUID   `json:"id" db:"id"`
-	Title       string      `json:"title" db:"title"`
-	Description string      `json:"description" db:"description"`
-	Logo        []byte      `json:"logo" db:"logo"`
-	Defcon      string      `json:"defcon" db:"defcon"` // level of access needed to see forum
-	Staff       slices.UUID `json:"staff" db:"staff"`   // moderator IDs
+	Title       string      `json:"title" db:"title" form:"title"`
+	Description string      `json:"description" db:"description" form:"description"`
+	Logo        []byte      `json:"logo" db:"logo" form:"logo"`
+	Defcon      string      `json:"defcon" db:"defcon" form:"access"` // level of access needed to see forum
+	Staff       slices.UUID `json:"staff" db:"staff" form:"staff"`   // moderator IDs
 	CreatedAt   time.Time   `json:"created_at" db:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at" db:"updated_at"`
+
+	StaffEmails string `form:"staffemail" db:"-"`
 }
 
 // String is not required by pop and may be deleted

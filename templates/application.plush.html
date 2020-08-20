@@ -3,61 +3,56 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
-    <title>Buffalo - Curso</title>
-    <!-- <%= stylesheetTag("application.css") %> -->
+    <title>Foros ITBA</title>
+    <%= stylesheetTag("application.css") %>
     <meta name="csrf-param" content="authenticity_token"/>
     <meta name="csrf-token" content="<%= authenticity_token %>"/>
-    <link rel="icon" href="<%= assetPath(" images
-    /favicon.ico") %>">
+    <link rel="icon" href="<%= assetPath("images/logo-curso.png") %>">
 </head>
 <body>
 <div class="container">
     <!-- NavBar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-2">
-        <a class="navbar-brand" href="<%= rootPath() %>">
-            <%= if (len(forum.Logo)==0) { %>
-            <img src="<%= assetPath(" images/logo-curso.png") %>" style="width:50px;">
-            <% } else { %>
-            <img src="data:image/png;base64,<%= forum.LogoImage() %>" style="width:50px;">
-            <% } %>
-        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
+                <%= if (inForum) {
+                    let ftitle = {forum_title:forum.Title}
+                    let fpath = forumPath(ftitle)
+                %>
                 <li class="nav-item">
-                    <a class="nav-link" href="<%= categoriesIndexPath() %>"><%= t("app-categories") %></a>
+                    <a class="nav-link" href="<%= fpath %>"><%= t("app-categories") %></a>
                 </li>
+
+                <% } %>
+                <%= if (current_user && current_user.Role == "admin") { %>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><%= t("app-topics") %></a>
-                </li>
-                <%= if (current_user && current_user.Admin) { %>
-                <li class="nav-item">
-                    <a class="nav-link" href="<%= usersSettingsPath() %>"><%= t("app-users") %></a>
+                    <a class="nav-link" href="<%= user_settings_path %>"><%= t("app-users") %></a>
                 </li>
                 <% } %>
             </ul>
             <ul class="navbar-nav">
                 <%= if (current_user) { %>
-                <li class="nav-item" style="font-size: 30px">
-                    <a class="nav-link" href="<%= searchPath() %>">
+               <!-- <li class="nav-item" style="font-size: 30px">
+                    <a class="nav-link" href="<%= search_path %>">
                         <i class="fa fa-search"></i>
                     </a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <div class="dropdown">
                         <button type="button" class="btn btn-light" data-toggle="dropdown">
                             <img src="data:image/png;base64,<%= current_user.Image() %>"
-                                 alt="<%= current_user.Username %>" style="width:50px;" class="img-circle">
+                                 alt="<%= current_user.Name %>" style="width:50px;" class="img-circle">
                             <span class="fa fa-caret-down"></span>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item nav-link fa fa-gear" href="<%= usersSettingsPath() %>"> <%=
+                            <a class="dropdown-item nav-link fa fa-gear" href="<%=user_settings_path%>"> <%=
                                 t("app-settings") %></a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item nav-link fa fa-sign-out" href="<%= usersLogoutPath() %>"> <%=
+                            <a class="dropdown-item nav-link fa fa-sign-out" href="<%= auth_path %>" data-method="DELETE"> <%=
                                 t("app-logout") %></a>
                         </div>
                     </div>
@@ -65,18 +60,16 @@
 
                 <% } else { %>
                 <li class="nav-item">
-                    <a href="<%= usersLoginPath() %>" class="nav-link"><%= t("app-login") %></a>
+                    <a href="<%= auth_path %>" class="nav-link"><%= t("app-login") %></a>
                 </li>
                 <li class="nav-item">
-                    <a href="<%= usersRegisterPath() %>" class="nav-link"><%= t("app-register") %></a>
+                    <a href="<%= auth_path %>" class="nav-link"><%= t("app-register") %></a>
                 </li>
                 <% } %>
             </ul>
         </div>
     </nav>
     <!-- End NavBar -->
-    <%= partial("flash.html") %>
-    <%= yield %>
 </div>
 <div class="container">
     <%= partial("flash.html") %>
@@ -86,3 +79,11 @@
 <%= javascriptTag("application.js") %>
 </body>
 </html>
+<!--
+<a class="navbar-brand" href="<%= root_path %>">
+    <= if (len(forum.Logo)==0) { >
+    <img src="<= assetPath(" images/logo-curso.png") >" style="width:50px;">
+    < } else { >
+    <img src="data:image/png;base64,<= forum.LogoImage() >" style="width:50px;">
+    < } >
+</a> -->

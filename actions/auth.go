@@ -1,17 +1,16 @@
 package actions
 
 import (
-	"github.com/pkg/errors"
-	"github.com/soypat/curso/models"
-	"net/http"
-	"github.com/gobuffalo/pop/v5"
+	"fmt"
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/pop/v5"
+	"github.com/gofrs/uuid"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/google"
+	"github.com/pkg/errors"
+	"github.com/soypat/curso/models"
 	"os"
-	"github.com/gofrs/uuid"
-	"fmt"
 )
 
 const cookieUidName = "current_user_id"
@@ -27,7 +26,7 @@ func init() {
 // When user log into provider they are redirected
 // to this function which creates the session id
 // in user cookie jar. The user then can then be
-// authorized succesfully through Authorize function
+// authorized successfully through Authorize function
 // The user is also added to DB if they don't exist here
 func AuthCallback(c buffalo.Context) error {
 	c.Logger().Debug("AuthCallback called")
@@ -42,8 +41,8 @@ func AuthCallback(c buffalo.Context) error {
 		return errors.WithStack(err)
 	} // check users table exists
 	u := &models.User{}
-	if exists { // if
-		err = q.First(u) // if we find our user, save data to `u`
+	if exists { // if we find our user, save data to `u`
+		err = q.First(u)
 		if err != nil {
 			return errors.WithStack(err)
 		}
@@ -68,7 +67,8 @@ func AuthCallback(c buffalo.Context) error {
 	return c.Redirect(302, "/") // redirect to homepage
 }
 
-// logout process. kills cookies leaving user unable to Authorize
+// logout process. kills cookies leaving user
+// unable to Authorize without logging in again
 func AuthDestroy(c buffalo.Context) error {
 	c.Session().Clear()
 	err := c.Session().Save()
@@ -79,7 +79,8 @@ func AuthDestroy(c buffalo.Context) error {
 	return c.Redirect(302, "/")
 }
 
-// Backbone of the authorization process.  This should run before displaying any internal page
+// Backbone of the authorization process.
+// This should run before displaying any internal page
 // and kick unauthorized users back to homepage
 func Authorize(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
@@ -107,13 +108,13 @@ func Authorize(next buffalo.Handler) buffalo.Handler {
 			return c.Redirect(500, "/")
 		}
 		c.Set("username", u.Name)
-		c.Logger().Debugf("Finished Authorize. %s authorized",u.Name)
+		c.Logger().Debugf("Finished Authorize. %s authorized", u.Name)
 		return next(c)
 	}
 }
 
-// This function is to provide Context with user information
-// I'm still unsure why Authorize can't do this for you. It probably could
+// This function is to provide Context with user information on `current_user`.
+// If user is not logged in it does nothing.
 func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		c.Logger().Debug("SetCurrentUser called")
@@ -132,7 +133,26 @@ func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 	}
 }
 
-// GothGoogle default implementation.
-func GothGoogle(c buffalo.Context) error {
-	return c.Render(http.StatusOK, r.HTML("goth/google.html"))
+// This authorization is for server maintenance/management only
+// authorizes where user has role=='admin'
+func AdminAuth(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+		c.Logger().Debug("AdminAuth called")
+		if uid := c.Session().Get(cookieUidName); uid != nil {
+			u := &models.User{}
+			tx := c.Value("tx").(*pop.Connection)
+			c.Logger().Debug(uid.(uuid.UUID).String())
+			q := tx.Where("id = ?  and role = ?", uid.(uuid.UUID).String(), "admin") // FIXME check provider too for increased security
+			exists, err := q.Exists(u)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			if exists {
+				c.Logger().Infof("Authorized %s", u.Name)
+				return next(c) // user has admin role
+			}
+		}
+		c.Flash().Add("danger", "You can't do that!")
+		return c.Redirect(403, "/") // user not found in db or does not have admin role
+	}
 }

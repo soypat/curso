@@ -14,8 +14,8 @@ import (
 // Category is used by pop to map your categories database table to your go code.
 type Category struct {
 	ID             uuid.UUID    `json:"id" db:"id"`
-	Title          string       `json:"title" db:"title"`
-	Description    nulls.String `json:"description" db:"description"`
+	Title          string       `json:"title" db:"title" form:"title"`
+	Description    nulls.String `json:"description" db:"description" form:"description"`
 	Subscribers    slices.UUID  `json:"subscribers" db:"subscribers"`
 	ParentCategory nulls.UUID   `json:"parent_category" db:"parent_category"`
 	CreatedAt      time.Time    `json:"created_at" db:"created_at"`

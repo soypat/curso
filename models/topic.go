@@ -13,10 +13,10 @@ import (
 // Topic is used by pop to map your topics database table to your go code.
 type Topic struct {
 	ID          uuid.UUID   `json:"id" db:"id"`
-	Title       string      `json:"title" db:"title"`
-	Content     string      `json:"content" db:"content"`
+	Title       string      `json:"title" db:"title" form:"title"`
+	Content     string      `json:"content" db:"content" form:"content"`
 	AuthorID    uuid.UUID   `json:"author_id" db:"author_id"`
-	CategoryID  uuid.UUID   `json:"category_id" db:"category_id"`
+	CategoryID  uuid.UUID   `json:"category_id" db:"category_id" `
 	Deleted     bool        `json:"deleted" db:"deleted"`
 	Subscribers slices.UUID `json:"subscribers" db:"subscribers"`
 	CreatedAt   time.Time   `json:"created_at" db:"created_at"`

@@ -5,6 +5,7 @@ import (
 	"github.com/gobuffalo/buffalo"
 	forcessl "github.com/gobuffalo/mw-forcessl"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
+	"github.com/markbates/goth/gothic"
 	"github.com/unrolled/secure"
 
 	"github.com/soypat/curso/models"
@@ -16,6 +17,7 @@ import (
 
 // ENV is used to help switch settings based on where the
 // application is being run. Default is "development".
+// GO_END = production for deployment
 var ENV = envy.Get("GO_ENV", "development")
 var app *buffalo.App
 var T *i18n.Translator
@@ -54,13 +56,57 @@ func App() *buffalo.App {
 		//  c.Value("tx").(*pop.Connection)
 		// Remove to disable this.
 		app.Use(popmw.Transaction(models.DB))
-
 		// Setup and use translations:
 		app.Use(translations())
-		app.Use()
-		app.GET("/", HomeHandler)
 
-		app.GET("/goth/google", GothGoogle)
+		// -- Authorization/Security procedures --
+		// sets user data in context from session data.
+		app.Use(SetCurrentUser)
+		app.Use(SiteStruct)
+		bah := buffalo.WrapHandlerFunc(gothic.BeginAuthHandler) // Begin authorization handler = bah
+		auth := app.Group("/auth")
+		auth.GET("/",AuthHome)
+		auth.GET("/{provider}/callback", AuthCallback)
+		auth.GET("/{provider}", bah)
+		auth.Middleware.Skip(Authorize, bah, AuthCallback) // don't ask for authorization on authorization page
+		//auth.Middleware.Skip(SetCurrentUser,bah, AuthCallback) // set current user needs to seek user in db. if no users present in db setcurrentuser fails
+		auth.DELETE("", AuthDestroy)
+
+		// TODO add authorization and admin auth
+		// home page setup
+		app.GET("/", manageForum)
+		//app.Use(SetCurrentForum)
+		app.GET("/f", NotFound)
+		forum := app.Group("/f/{forum_title}")
+		forum.Use(SetCurrentForum)
+		forum.GET("/", forumIndex).Name("forum")
+		forum.GET("/create",CategoriesCreateGet).Name("catCreate")
+		forum.POST("/create",CategoriesCreatePost)
+		//forum.GET("/c/{cat_title}/", CategoriesIndex)
+		//forum.GET("/c/{cat_title}/new", TopicCreateGet )
+		//forum.POST("/c/{cat_title}/new", TopicCreatePost )
+		catGroup := forum.Group("/c/{cat_title}")
+		catGroup.Use(SetCurrentCategory)
+		catGroup.GET("/", CategoriesIndex).Name("cat")
+		catGroup.GET("/createTopic",TopicCreateGet).Name("topicCreate")
+		catGroup.POST("/createTopic",TopicCreatePost)
+
+		topicGroup := catGroup.Group("/{tid}")
+
+		topicGroup.GET("/",TopicGet).Name("topicGet") //
+
+		//topicGroup.GET("/create",TopicCreateGet)
+		//catGroup.GET("/create", CategoriesCreateGet)
+		//catGroup.POST("/create", CategoriesCreatePost)
+		//catGroup.GET("/detail", CategoriesDetail)
+
+		admin := app.Group("/admin")
+		admin.Use(SiteStruct)
+		admin.GET("/f", manageForum)
+		admin.GET("newforum",createForum)
+		//admin.GET("newforum/post", createForumPost)
+		admin.POST("newforum/post", createForumPost)
+
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 
@@ -73,7 +119,7 @@ func App() *buffalo.App {
 // for more information: https://gobuffalo.io/en/docs/localization
 func translations() buffalo.MiddlewareFunc {
 	var err error
-	if T, err = i18n.New(packr.New("app:locales", "../locales"), "en-US"); err != nil {
+	if T, err = i18n.New(packr.New("app:locales", "../locales"), "es-es"); err != nil {
 		app.Stop(err)
 	}
 	return T.Middleware()
@@ -89,4 +135,8 @@ func forceSSL() buffalo.MiddlewareFunc {
 		SSLRedirect:     ENV == "production",
 		SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
 	})
+}
+
+func NotFound(c buffalo.Context) error {
+	return c.Render(404, r.HTML("meta/404.plush.html"))
 }

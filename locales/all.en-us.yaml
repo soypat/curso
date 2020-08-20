@@ -1,3 +1,99 @@
 # For more information on using i18n see: https://github.com/nicksnyder/go-i18n
 - id: welcome_greeting
-  translation: "Welcome to Buffalo (EN)"
+  translation: "Bienvenidos"
+- id: app-not-found
+  translation: "404 Recurso no encontrado"
+- id: app-users
+  translation: "Usuarios"
+- id: app-categories
+  translation: "Categorias"
+- id: app-topics
+  translation: "Temas"
+- id: app-login
+  translation: "Iniciar sesión"
+# Admin stuff
+- id: new-forum
+  translation: "Nuevo foro"
+- id: new-forum-logo-help
+  translation: "El logo es requerido"
+- id: new-forum-category
+  translation: "Nueva categoría"
+- id: new-forum-staff-help
+  translation: "Emails de encargados. Separar con commas."
+- id: new-forum-access-help
+  translation: "Nivel de acceso. 0 es público. 1 es solo moderadores."
+
+- id: placeholder
+  translation: "placeholder"
+- id: placeholder
+  translation: "placeholder"
+- id: placeholder
+  translation: "placeholder"
+- id: placeholder
+  translation: "placeholder"
+- id: placeholder
+  translation: "placeholder"
+# FORUM
+- id: forum-name
+  translation: "Nombre del foro"
+- id: no-forums-found
+  translation: "No se encontraron foros"
+
+# CATEGORY
+- id: category-category
+  translation: "Categoría"
+- id: category-topic
+  translation: "Temas de categoría"
+- id: category-activity
+  translation: "Última actividad"
+- id: category-new-category
+  translation: "Nueva categoría"
+- id: category-new-topic
+  translation: "Nuevo tema"
+- id: category-users
+  translation: "Usuario"
+- id: category-replies
+  translation: "Respuestas"
+- id: category-no-topics-found
+  translation: "Sé el primero en postear un tema!"
+
+# TOPIC
+- id: new-topic
+  translation: "Nuevo tema"
+- id: new-topic-content-help
+  translation: "Contenido a postear. Soporta markdown"
+- id: new-topic-title-help
+  translation: "Nombre descriptivo del tema."
+- id: new-topic-content-placeholder
+  translation: |
+    * Bullet point, `código`, *negrita*,
+    ```
+    bloque de código
+    ```
+
+# direct translations
+- id: description
+  translation: "Descripción"
+- id: logo
+  translation: "Logo"
+- id: attach-image
+  translation: "Adjuntar imagen"
+- id: title
+  translation: "Título"
+- id: access
+  translation: "Acceso"
+- id: moderators
+  translation: "Moderadores"
+- id: submit
+  translation: "Enviar"
+- id: topic
+  translation: "Tema"
+- id: content
+  translation: "Contenido"
+
+- id: description
+  translation: "Descripción"
+- id: description
+  translation: "Descripción"
+- id: description
+  translation: "Descripción"

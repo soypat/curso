@@ -52,11 +52,14 @@ $> buffalo dev
 If you point your browser to [http://127.0.0.1:3000](http://127.0.0.1:3000) you should see a "Welcome to the Saloon Forum" page.
 
 ## how i did this
+Don't bother reading this. These are notes for myself if I ever try building a new buffalo app in the future.
+
 `buffalo new curso` then `cd curso`
 
 
 `buffalo pop g model user name nick provider provider_id email role subscriptions`
--> modify `models/user.go` -> change subscriptions to `slices.UUID` type
+-> modify `models/user.go` -> change subscriptions to `slices.UUID` type. change
+all types that are not fit for default datatype.
 
 migration for `users`
 ```

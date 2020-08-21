@@ -17,7 +17,7 @@ func SiteStruct(next buffalo.Handler) buffalo.Handler {
 		c.Set("categories_index", "/c")
 		c.Set("user_settings_path", "/u")
 		c.Set("auth_path", "/auth")
-		c.Set("root_path", "")
+		c.Set("root_path", "/")
 		c.Set("search_path", "/s")
 		c.Set("inForum", false)
 		c.Set("create_forum_path", "/admin/newforum/")

@@ -4,13 +4,17 @@
 - id: app-not-found
   translation: "404 Recurso no encontrado"
 - id: app-users
-  translation: "Usuarios"
+  translation: "Ajustes de Usuario"
 - id: app-categories
   translation: "Categorias"
 - id: app-topics
   translation: "Temas"
 - id: app-login
   translation: "Iniciar sesión"
+- id: app-logout
+  translation: "Cerrar sesión"
+- id: app-settings
+  translation: "Configuración"
 - id: app-request-login
   translation: "Iniciar sesión"
 - id: app-login-title
@@ -19,6 +23,22 @@
   translation: "Para participar del foro es necesario estar registrado con un proveedor"
 - id: app-login-choose
   translation: "Eliga su proveedor de la lista"
+
+# USERS
+- id: user-settings-headline
+  translation: "Ajustes de usuario"
+- id: user-settings-nick
+  translation: "Apodo"
+- id: user-settings-nick-help
+  translation: "Nombre que será mostrado en el foro"
+- id: user-settings-nick-placeholder
+  translation: "xXDarkKnightXx"
+- id: user-settings-nick-empty
+  translation: "El apodo no puede ser vacío"
+- id: user-settings-nick-invalid
+  translation: "El apodo no puede tener más de 10 caracteres (alfanuméricos)"
+- id: user-settings-nick-edit-success
+  translation: "Se cambió el apodo correctamente"
 
 # Admin stuff
 - id: new-forum

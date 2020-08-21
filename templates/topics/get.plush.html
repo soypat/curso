@@ -25,6 +25,9 @@
         <a href="<%= topicEditPath(ctx) %>" class="btn btn-secondary btn-sm ">
             <i class="icon-edit"> <%=t("topic-edit") %></i>
         </a>
+
+        <% } else { %>
+        <%= if (current_user) { %>
         <a href="<%= replyPath(ctx) %>" class="btn btn-secondary btn-sm">
             <i class="icon-mail-reply"> <%=t("topic-reply") %></i>
         </a>
@@ -32,6 +35,7 @@
         <a href="<%= authPath({provider:"google"}) %>" class="btn btn-secondary btn-sm">
             <i class="icon-user"> <%=t("app-request-login") %></i>
         </a>
+        <% } %>
         <% } %>
     </div>
 

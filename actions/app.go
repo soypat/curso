@@ -72,7 +72,8 @@ func App() *buffalo.App {
 		auth.Middleware.Skip(Authorize, bah, AuthCallback) // don't ask for authorization on authorization page
 		//auth.Middleware.Skip(SetCurrentUser,bah, AuthCallback) // set current user needs to seek user in db. if no users present in db setcurrentuser fails
 		auth.DELETE("", AuthDestroy)
-
+		app.GET("/u",UserSettingsGet).Name("userSettings")
+		app.POST("/u",UserSettingsPost)
 		// home page setup
 		app.GET("/", manageForum) //TODO change homepage
 		app.GET("/f", NotFound)

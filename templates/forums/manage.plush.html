@@ -5,6 +5,7 @@
         <% } %>
     </div>
 </div>
+<h2>Foros activos</h2>
 
 <div class="container">
     <%= if (len(forums) == 0) {%>
@@ -17,6 +18,7 @@
             <a href="<%= forumPath({forum_title:v.Title}) %>">
             <%= v.Title %>
             </a>
+            <span style="margin-left: 4rem"><%= v.Description %></span>
         </div>
         <% } %>
     <% } %>

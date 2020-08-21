@@ -25,6 +25,11 @@ add_index("users", ["provider", "provider_id", "role"], {"unique":true})
 Same goes for other db tables. `buffalo pop g model forum title description logo defcon staff`. db type for `[]byte` is `blob`
 
 
+npm gotta have python and c++ build tools for `node-sass`, don't ask me why, windows sucks. Run following in powershell in admin mode
+```
+npm install -g node-gyp
+npm install --global --production windows-build-tools
+```
 
 
 # Welcome to Buffalo!

@@ -14,7 +14,7 @@ import (
 type User struct {
 	ID            uuid.UUID   `json:"id" db:"id"`
 	Name          string      `json:"name" db:"name"`
-	Nick          string      `json:"nick" db:"nick"`
+	Nick          string      `json:"nick" db:"nick" form:"nick"`
 	Provider      string      `json:"provider" db:"provider"`
 	ProviderID    string      `json:"provider_id" db:"provider_id"`
 	Email         string      `json:"email" db:"email"`

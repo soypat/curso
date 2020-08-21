@@ -9,8 +9,8 @@ import (
 )
 
 func ReplyGet(c buffalo.Context) error {
-	reply := models.Reply{}
-	c.Set("reply",reply)
+	//reply := models.Reply{}
+	//c.Set("reply",reply)
 	return c.Render(200, r.HTML("replies/create.plush.html"))
 }
 
@@ -83,6 +83,7 @@ func SetCurrentReply(next buffalo.Handler) buffalo.Handler {
 			c.Flash().Add("danger",T.Translate(c,"topic-not-found"))
 			return c.Render(404,r.HTML("meta/404.plush.html"))
 		}
+		c.Logger().Infof("Reply got %s",reply)
 		c.Set("reply",reply)
 		return next(c)
 	}

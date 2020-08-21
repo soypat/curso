@@ -6,7 +6,7 @@ but now derelict [go-saloon/saloon](https://github.com/go-saloon/saloon).
 
 It uses Postgres SQL database and OAuth2 using goth.
 
-Thanks to Sebastian Binet for providing a sturdy foundation for this forum app.
+Thanks to Sebastian Binet and the go-saloon authors for providing a sturdy foundation for this forum app.
 
 ## Looks
 

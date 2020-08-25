@@ -19,6 +19,7 @@ func init() {
 	gothic.Store = App().SessionStore
 	goth.UseProviders(
 		google.New(os.Getenv("GGL_KEY_FORUM"), os.Getenv("GGL_SECRET_FORUM"), fmt.Sprintf("%s%s", App().Host, "/auth/google/callback"),
+		//google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"), fmt.Sprintf("%s%s", App().Host, "/auth/google/callback"),
 			"profile", "email"),
 	)
 }
@@ -118,7 +119,9 @@ func Authorize(next buffalo.Handler) buffalo.Handler {
 func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		c.Logger().Debug("SetCurrentUser called")
+		c.Logger().Printf("%s",c.Session().Session)
 		if uid := c.Session().Get(cookieUidName); uid != nil {
+			c.Logger().Debug("user id found in SetCurrentUser" )
 			u := &models.User{}
 			tx := c.Value("tx").(*pop.Connection)
 			err := tx.Find(u, uid)

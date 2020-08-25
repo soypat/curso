@@ -64,14 +64,15 @@ func App() *buffalo.App {
 		// sets user data in context from session data.
 		app.Use(SetCurrentUser)
 		app.Use(SiteStruct)
+		app.GET("/auth",AuthHome)
 		bah := buffalo.WrapHandlerFunc(gothic.BeginAuthHandler) // Begin authorization handler = bah
 		auth := app.Group("/auth")
-		auth.GET("/",AuthHome)
+		//auth.GET("/",AuthHome)
 		auth.GET("/{provider}/callback", AuthCallback)
 		auth.GET("/{provider}", bah)
 		auth.Middleware.Skip(Authorize, bah, AuthCallback) // don't ask for authorization on authorization page
-		//auth.Middleware.Skip(SetCurrentUser,bah, AuthCallback) // set current user needs to seek user in db. if no users present in db setcurrentuser fails
-		auth.DELETE("", AuthDestroy)
+		auth.Middleware.Skip(SetCurrentUser,bah, AuthCallback) // set current user needs to seek user in db. if no users present in db setcurrentuser fails
+		auth.DELETE("/logout", AuthDestroy).Name("logout")
 		app.GET("/u",UserSettingsGet).Name("userSettings")
 		app.POST("/u",UserSettingsPost)
 		// home page setup
@@ -79,6 +80,7 @@ func App() *buffalo.App {
 		app.GET("/f", NotFound)
 
 		forum := app.Group("/f/{forum_title}")
+		forum.GET("/c",NotFound)
 		forum.Use(SetCurrentForum)
 		forum.GET("/", forumIndex).Name("forum")
 		forum.GET("/create",CategoriesCreateGet).Name("catCreate")

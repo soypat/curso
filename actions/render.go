@@ -70,7 +70,7 @@ func timeSince(created time.Time, ctx plush.HelperContext) string {
         return created.Format("2006-02-01")
     }
     if days >= 1 {
-        return fmt.Sprintf("%dj", days)
+        return fmt.Sprintf("%dd", days)
     }
     if delta.Hours() >= 1 {
         return fmt.Sprintf("%dh", int(delta.Hours()))

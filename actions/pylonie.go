@@ -3,14 +3,12 @@ package actions
 import (
 	"crypto"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/gofrs/uuid"
 	"github.com/soypat/curso/models"
 	"go.etcd.io/bbolt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
@@ -19,6 +17,8 @@ import (
 	"strings"
 	"time"
 )
+
+const nullUUID = "00000000-0000-0000-0000-000000000000"
 
 var DB *bbolt.DB
 
@@ -30,13 +30,6 @@ func init() {
 		os.Exit(1)
 	}
 }
-
-
-//func CursoEvaluationGet(c buffalo.Context) error {
-//	return c.Render(http.StatusOK, r.HTML("curso/eval-index.plush.html"))
-//}
-
-
 
 
 // recieve POST request to submit and evaluate code
@@ -53,7 +46,10 @@ func InterpretPost(c buffalo.Context) error {
 		_ = p.codeResult(c,"","An unexpected error occurred. You were logged out")
 		return AuthDestroy(c)
 	}
-	if p.code.Evaluation.String() !=  "00000000-0000-0000-0000-000000000000" {
+	if p.code.Evaluation.String() !=  nullUUID {
+		if i,err:=strconv.ParseInt(p.code.Input,10,64); p.code.Input == "" || err!=nil || i<1000 {
+			return p.codeResult(c,"",T.Translate(c,"curso-python-input-field-error"))
+		}
 		c.Logger().Info("starting evaluation!")
 		tx := c.Value("tx").(*pop.Connection)
 		q := tx.Where("id = ?", p.code.Evaluation)
@@ -70,7 +66,7 @@ func InterpretPost(c buffalo.Context) error {
 		}
 		peval := pythonHandler{}
 		peval.code.Source = eval.Solution
-		peval.code.Input = eval.Inputs.String
+		peval.code.Input = p.code.Input //eval.Inputs.String
 		err = peval.runPy()
 		if err != nil {
 			return  p.codeResult(c,"","Evaluation errored! "+err.Error())
@@ -97,6 +93,7 @@ func InterpretPost(c buffalo.Context) error {
 // adds code result to context response.
 // First and second string inputs will replace
 // stdout and stderr code output, respectively
+// so be careful not to delete important output/error
 func (p *pythonHandler)codeResult(c buffalo.Context, output ...string) error {
 	if len(output)==1 {
 		p.result.Output = output[0]
@@ -130,7 +127,7 @@ const (
 
 type code struct {
 	Source string `json:"code" form:"code"`
-	Input string `json:"input"`
+	Input string `json:"input" form:"input"`
 	Evaluation uuid.UUID `json:"evalid" form:"evalid"`
 }
 
@@ -165,22 +162,6 @@ var allowedImports = map[string]bool{
 	"os":         false,
 }
 
-func newPyRequest(c buffalo.Context) (p pythonHandler, err error) {
-	uid := c.Session().Get("current_user_id")
-	if uid == nil {
-		return p, errors.New("unverified user")
-	}
-	p.UserName = fmt.Sprintf("%s", c.Value("username")) // we save "username" key in authorize middleware
-	p.userID = encode([]rune(uid.(uuid.UUID).String()), b64safe)
-	req := c.Request()
-	bodyBytes, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(bodyBytes, &p.code)
-	return
-}
-
 func (p *pythonHandler) runPy() (err error) {
 	err = p.code.sanitizePy()
 	output := make([]byte, 0)
@@ -192,13 +173,27 @@ func (p *pythonHandler) runPy() (err error) {
 		return
 	}
 	filename := fmt.Sprintf("tmp/%s/f.py", p.userID)
+
 	f, err := os.Create(filename)
 	if err != nil {
 		return
 	}
 	defer f.Close()
 	f.Write([]byte(p.code.Source))
-	cmd := exec.Command(pyCommand, filename)
+	var cmd *exec.Cmd
+	if p.Input != "" {
+		inputFilename := fmt.Sprintf("tmp/%s/in.txt", p.userID)
+		fi, err2 := os.Create(inputFilename)
+		if err2 != nil {
+			return err2
+ 		}
+		defer fi.Close()
+		fi.Write([]byte(p.code.Input))
+		cmd = exec.Command(pyCommand, filename,"<",inputFilename)
+	} else {
+		cmd = exec.Command(pyCommand, filename)
+	}
+
 	status := make(chan pyExitStatus, 1)
 	go func() {
 		time.Sleep(pyTimeout_ms * time.Millisecond)
@@ -327,31 +322,3 @@ func pyDBBackup(c buffalo.Context) error {
 	}
 	return nil
 }
-
-
-
-//func pyPlaygroundSubmit(c buffalo.Context) error {
-	//	p, err := newPyRequest(c)
-	//	if err != nil {
-	//		c.Logger().Errorf("[Pyn] error before running code. expunging user")
-	//		c.Flash().Add("danger", "An unexpected error occurred. You were logged out")
-	//		return AuthDestroy(c)
-	//	}
-	//	if p.code.Evaluation.String() !=  "00000000-0000-0000-0000-000000000000" {
-	//
-	//		return nil
-	//	} else {
-	//		err = p.runPy()
-	//		defer p.Put(DB, c)
-	//		if err != nil {
-	//			p.Error = err.Error()
-	//			jsonResponse, _ := json.Marshal(p.result)
-	//			c.Response().Write(jsonResponse)
-	//			return nil
-	//		}
-	//		jsonResponse, _ := json.Marshal(p.result)
-	//		c.Response().Write(jsonResponse)
-	//		return nil
-	//	}
-	//
-	//}

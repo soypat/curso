@@ -12,6 +12,12 @@ if (evaluation) {
     <input name="evalid" value="<%= evalid %>" type="hidden">
     <% }%>
     <div class="container">
+        <%= if ((evaluation)) { %>
+        <div class="row">
+            <label for="input">ID del equipo: </label>
+            <input type="text" id="input" name="input">
+        </div>
+        <% }%>
         <div class="row" id="banner">
             <div class="col-sm-4" id="head" itemprop="name"><%= t("curso-python-interpreter-title") %>
                 <button id="run" class="btn btn-primary btn-sm"><i class="icon-play"></i> <%= t("curso-python-interpreter-run") %></button>

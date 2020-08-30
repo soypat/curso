@@ -1,5 +1,19 @@
-<%= if (current_user.Role == "admin") { %>
-
+<%= if (current_user.Role == "admin") {
+    let content = ""
+    let title  = ""
+    let description = ""
+    let hidden = false
+    let status = "new"
+    let solution = ""
+    if (evaluation) {
+        content = evaluation.Content
+        title  = evaluation.Title
+        description  = evaluation.Description
+        hidden = evaluation.Hidden
+        solution = evaluation.Solution
+        status = "edit"
+    }
+%>
 
 <div class="row mt-3 justify-content-center">
     <div class="col-md-8 col-sm-10">
@@ -13,7 +27,7 @@
                 <label class="col-md-4 control-label" for="title"><%= t("title") %></label>
                 <div class="col-md-4">
                     <input id="title" name="title" type="text" placeholder="El misterio del amor"
-                           class="form-control input-md" required="">
+                           class="form-control input-md" required="" value="<%=  title %>">
                     <span class="help-block"><%=t("curso-python-evaluation-title-help") %></span>
                 </div>
             </div>
@@ -23,13 +37,13 @@
                 <label class="col-md-4 control-label" for="description"><%= t("description")%></label>
                 <div class="col-md-5">
                     <input id="description" name="description" type="text" placeholder="Fecha límite: 24/10"
-                           class="form-control input-md" required>
+                           class="form-control input-md" required value="<%=  description %>">
                 </div>
             </div>
             <!-- Single checkbox (inline) -->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="hidden"><%= t("hidden") %></label>
-                <input type="checkbox" name="hidden" id="hidden" value="true">
+                <input type="checkbox" name="hidden" id="hidden" value="true" <%= if (hidden) { %> checked<% } %>>
                 <div class="col-md-4">
                     <span class="help-block"><%= t("curso-python-evaluation-hidden-help") %></span>
                 </div>
@@ -39,7 +53,7 @@
             <div class="form-group">
                 <label class="col-md-8 control-label" for="content"><%= t("content") %></label>
                 <div class="col-md-8">
-                    <textarea required rows="9" class="form-control" id="content" name="content" placeholder="<%= t("app-markdown-example") %>"></textarea>
+                    <textarea required rows="9" class="form-control" id="content" name="content" placeholder="<%= t("app-markdown-example") %>"><%= content %></textarea>
                     <span class="help-block"><%= t("curso-python-evaluation-content-help") %></span>
                 </div>
             </div>
@@ -47,7 +61,7 @@
             <div class="form-group">
                 <label class="col-lg-4 control-label" for="solution"><%= t("curso-python-evaluation-solution") %></label>
                 <div class="col-md-4">
-                    <textarea class="form-control" id="solution" name="solution" required></textarea>
+                    <textarea class="form-control" id="solution" name="solution" required><%= solution %></textarea>
                     <span class="help-block"><%= t("curso-python-evaluation-solution-help") %></span>
                 </div>
             </div>

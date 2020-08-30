@@ -2,6 +2,7 @@ package actions
 
 import (
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/buffalo/render"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/pkg/errors"
 	"github.com/soypat/curso/models"
@@ -43,6 +44,56 @@ func CursoEvaluationCreatePost(c buffalo.Context) error {
 	return c.Render(200, r.HTML("curso/eval-create.plush.html"))
 }
 
+func CursoEvaluationEditGet(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	eval := &models.Evaluation{}
+	eid := c.Param("evalid")
+	q := tx.Where("id = ?",eid)
+	if err := q.First(eval); err != nil {
+		return c.Error(404, err)
+	}
+	c.Set("evaluation",eval)
+	return c.Render(200,r.HTML("curso/eval-create.plush.html"))
+}
+
+func CursoEvaluationEditPost(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	eid := c.Param("evalid")
+
+	eval := &models.Evaluation{}
+	q := tx.Where("id = ?", eid)
+	if err:=q.First(eval); err != nil {
+		return errors.WithStack(err)
+	}
+	uid := eval.ID
+	if err:= c.Bind(eval); err != nil {
+		return errors.WithStack(err)
+	}
+	eval.ID = uid
+	// Validate the data from the html form
+	if err := tx.Update(eval); err != nil {
+		return errors.WithStack(err)
+	}
+	c.Flash().Add("success", T.Translate(c,"edit-success"))
+	return c.Redirect(302, "evaluationGetPath()",render.Data{"evalid":eval.ID})
+}
+
+func CursoEvaluationDelete(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	eid := c.Param("evalid")
+	eval := &models.Evaluation{}
+	q := tx.Where("id = ?", eid)
+	if err:=q.First(eval); err != nil {
+		return errors.WithStack(err)
+	}
+	eval.Deleted = true
+	if err := tx.Update(eval); err != nil {
+		return errors.WithStack(err)
+	}
+	c.Flash().Add("success", T.Translate(c,"delete-success"))
+	return c.Redirect(302, "evaluationPath()")
+}
+
 func CursoEvaluationGet(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	eval := &models.Evaluation{}
@@ -52,7 +103,6 @@ func CursoEvaluationGet(c buffalo.Context) error {
 		return c.Error(404, err)
 	}
 	c.Set("evaluation",eval)
-
 	return c.Render(200, r.HTML("curso/eval-get.plush.html"))
 }
 

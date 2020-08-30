@@ -75,15 +75,20 @@ func App() *buffalo.App {
 		auth.DELETE("/logout", AuthDestroy).Name("logout")
 		app.GET("/u",UserSettingsGet).Name("userSettings")
 		app.POST("/u",UserSettingsPost)
+
 		// home page setup
 		app.GET("/", manageForum) //TODO change homepage
 		app.GET("/f", NotFound)
 
 		curso := app.Group("/curso-python")
 		curso.GET("/eval",EvaluationIndex).Name("evaluation")
-		curso.GET("/eval/e/{evalid}",CursoEvaluationGet).Name("evaluationGet")
 		curso.GET("/eval/create",CursoEvaluationCreateGet).Name("evaluationCreate")
 		curso.POST("/eval/create",CursoEvaluationCreatePost)
+		curso.GET("/eval/e/{evalid}",CursoEvaluationGet).Name("evaluationGet")
+		curso.GET("/eval/e/{evalid}/edit",CursoEvaluationEditGet).Name("evaluationEditGet")
+		curso.POST("/eval/e/{evalid}/edit",CursoEvaluationEditPost)
+		curso.GET("/eval/e/{evalid}/delete",CursoEvaluationDelete).Name("evaluationDelete")
+
 
 		interpreter := app.Group("/py")
 		interpreter.POST("/",InterpretPost).Name("Interpret")

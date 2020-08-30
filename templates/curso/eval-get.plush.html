@@ -1,15 +1,57 @@
-<%= if (current_user) { %>
+<%= if (current_user) {
+let ctx = {evalid: evaluation.ID}
+%>
+
 <h5><%= t("curso-python-evaluations-title") %></h5>
-<div>
+<div class="row">
     <h2><%= evaluation.Title %></h2>
 
-    <div><%= markdown(evaluation.Content) %></div>
+    <div class="col-md-8 mt-3 offset-md-2">
+        <%= markdown(evaluation.Content) %>
+    </div>
+
+
+
+    <%= if (current_user.Role == "admin") { %>
+    <div class="col-md-2 mt-3 offset-md-8 text-right">
+        <button type="button" class="btn btn-danger btn-sm m-0" data-toggle="modal" data-target="#topic-modal-<%= evaluation.ID %>">
+            <i class="icon-trash"> <%=t("topic-delete") %></i>
+        </button>
+        <a href="<%= evaluationEditGetPath(ctx) %>" class="btn btn-secondary btn-sm ">
+            <i class="icon-edit"> <%=t("topic-edit") %></i>
+        </a>
+    </div>
+    <% } %>
+</div>
     <textarea wrap="off" class="lined col-sm-12" rows="10" id="solution" disabled>#Solución <%= evaluation.Title %> (invisible a usuarios comunes)
 <%=evaluation.Solution %></textarea>
-</div>
-
 
     <%= partial("curso/interpreter.html") %>
+
+<div class="modal fade" id="topic-modal-<%= evaluation.ID %>">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title"><%= t("topic-delete-msg", {title: evaluation.Title}) %></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal  -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col text-left">
+                        <a href="<%= evaluationDeletePath({evalid: evaluation.ID}) %>" class="btn btn-danger">
+                            <i class="icon-trash"><%= t("topic-delete") %></i>
+                        </a>
+                    </div>
+                    <div class="col text-right">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= t("close") %></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <% } else {  %>
 
     <%= t("curso-python-not-allowed") %>

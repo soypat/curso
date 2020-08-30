@@ -1,0 +1,17 @@
+<%= if (current_user) { %>
+<h5><%= t("curso-python-evaluations-title") %></h5>
+<div>
+    <h2><%= evaluation.Title %></h2>
+
+    <div><%= markdown(evaluation.Content) %></div>
+    <textarea wrap="off" class="lined col-sm-12" rows="10" id="solution" disabled>#Solución <%= evaluation.Title %> (invisible a usuarios comunes)
+<%=evaluation.Solution %></textarea>
+</div>
+
+
+    <%= partial("curso/interpreter.html") %>
+<% } else {  %>
+
+    <%= t("curso-python-not-allowed") %>
+
+<% } %>

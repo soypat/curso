@@ -7,3 +7,64 @@
 	border-radius: 50%;
 	width: 50px;
 }
+
+#code, #output, pre, .lines{
+    /* The default monospace font on OS X is ugly, so specify Menlo
+     * instead. On other systems the default monospace font will be used. */
+    font-family: Menlo, monospace;
+    font-size: 11pt;
+}
+
+#wrap {
+    padding: 5px;
+    margin: 0;
+    top: 5rem;
+    /*bottom: 25%;*/
+    left: 0;
+    right: 0;
+
+    background: #FFD;
+}
+#banner {
+    font-style:oblique;
+}
+#output, #solution {
+                border: none;
+                outline: none;
+                resize: none;
+                overflow: auto;
+}
+#output {
+    /*background: #f2f2f2; */
+    background: #0f0f0f;
+    color: white;
+}
+#code {
+    color: black;
+    background: inherit;
+    width: 100%;
+    height: 100%;
+    padding: 0; margin: 0;
+    border: none;
+    outline: none;
+    resize: none;
+    wrap: off;
+    float: right;
+}
+.lines {
+    padding-top: 0;
+    float: left;
+    overflow: hidden;
+    text-align: right;
+}
+.lines div {
+    padding-right: 5px;
+    color: lightgray;
+}
+.lineerror {
+    color: red;
+    background: #FDD;
+}
+.linedtextarea .codelines .lineselect {
+    color: red;
+}

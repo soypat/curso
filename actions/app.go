@@ -79,6 +79,15 @@ func App() *buffalo.App {
 		app.GET("/", manageForum) //TODO change homepage
 		app.GET("/f", NotFound)
 
+		curso := app.Group("/curso-python")
+		curso.GET("/eval",EvaluationIndex).Name("evaluation")
+		curso.GET("/eval/e/{evalid}",CursoEvaluationGet).Name("evaluationGet")
+		curso.GET("/eval/create",CursoEvaluationCreateGet).Name("evaluationCreate")
+		curso.POST("/eval/create",CursoEvaluationCreatePost)
+
+		interpreter := app.Group("/py")
+		interpreter.POST("/",InterpretPost).Name("Interpret")
+
 		forum := app.Group("/f/{forum_title}")
 		forum.GET("/c",NotFound)
 		forum.Use(SetCurrentForum)
@@ -113,7 +122,7 @@ func App() *buffalo.App {
 		admin.GET("/f", manageForum)
 		admin.GET("newforum",createForum)
 		admin.POST("newforum/post", createForumPost)
-
+		admin.GET("/cbu", pyDBBackup).Name("cursoCodeBackup")
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 

@@ -3,6 +3,8 @@
   translation: "Bienvenidos"
 - id: app-not-found
   translation: "404 Recurso no encontrado"
+- id: app-status-internal-error
+  translation: "500 Error interno"
 - id: app-users
   translation: "Ajustes de Usuario"
 - id: app-categories
@@ -159,14 +161,16 @@
   translation: "Enviar"
 - id: topic
   translation: "Tema"
+- id: user
+  translation: "Usuario"
 - id: content
   translation: "Contenido"
 - id: hidden
   translation: "Oculto"
+- id: evaluations
+  translation: "Evaluaciones"
 
-- id: description
-  translation: "Descripción"
-- id: description
+- id: status-404
   translation: "Descripción"
 - id: description
   translation: "Descripción"
@@ -193,12 +197,46 @@
 - id: curso-python-evaluation-content-help
   translation: "El contenido a mostrarle al usuario para orientar que tiene que hacer"
 - id: curso-python-evaluation-solution-help
-  translation: "La solución escrita en python para obtener los resultados correctos. "
+  translation: "La solución escrita en python para obtener los resultados correctos. No se muestra a ningún usuario."
 - id: curso-python-evaluation-solution
   translation: "Solución Python"
+- id: curso-python-evaluation-add-success
+  translation: "Se agregó la evaluación correctamente"
+- id: curso-python-evaluation-add-fail
+  translation: "Hubo un error agregando la evaluación"
+- id: curso-python-interpreter-only-members
+  translation: "Interpretador solo disponible para usuarios registrados"
+- id: curso-python-interpreter-title
+  translation: "Python 3"
+- id: curso-python-interpreter-run
+  translation: " "
+- id: curso-python-interpreter-placeholder
+  translation: | # "print(\"Hola mundo\")"
+    print("Hola mundo")
+- id: curso-python-evaluation-not-found
+  translation: "No se encontró la evaluación"
+- id: curso-python-evaluation-success
+  translation: "Evaluación OK! aprobado!"
+- id: curso-python-evaluation-fail
+  translation: "Evaluación desaprobada."
+- id: curso-python-code-backup
+  translation: "DB"
 - id: placeholder
   translation: "placeholder"
 - id: placeholder
   translation: "placeholder"
 - id: placeholder
   translation: "placeholder"
+- id: placeholder
+  translation: "placeholder"
+
+
+
+
+
+
+
+
+
+
+

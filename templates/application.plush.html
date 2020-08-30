@@ -6,10 +6,19 @@
     <title>Foros ITBA</title>
     <%= stylesheetTag("application.css") %>
     <script src="http://code.jquery.com/jquery.js"></script>
+    <!-- font awesome icons. Available: https://fontawesome.com/v3.2.1/icons/ -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <meta name="csrf-param" content="authenticity_token"/>
     <meta name="csrf-token" content="<%= authenticity_token %>"/>
     <link rel="icon"  href="<%= assetPath("images/logo-curso.png") %>">
+    <!--MATH JAX-->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <!-- JQUERY LINED TEXTAREA -->
+    <link rel="stylesheet" href="<%= assetPath("css/jquery-linedtextarea.css") %>">
+    <link rel="stylesheet" href="https://www.jqueryscript.net/css/jquerysctipttop.css">
 </head>
 <body>
 <div class="container">
@@ -34,17 +43,25 @@
                 let ftitle = {forum_title:forum.Title}
                 let fpath = forumPath(ftitle)
                 %>
-
                 <li class="nav-item">
                     <a class="nav-link" href="<%= fpath %>"><%= t("app-categories") %></a>
                 </li>
-
+                    <%= if (forum.Title == "Curso-Python") { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<%= evaluationPath() %>"><%= t("curso-python-evaluator") %></a>
+                    </li>
+                    <% } %>
                 <% } %>
-                <%= if (current_user && current_user.Role == "admin") { %>
+                <%= if (evaluation) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="<%= evaluationPath() %>"><%= t("curso-python-evaluator") %></a>
+                </li>
+                <% } %>
+             <!--   <%= if (current_user && current_user.Role == "admin") { %>
                 <li class="nav-item">
                     <a class="nav-link" href="<%= user_settings_path %>"><%= t("app-users") %></a>
                 </li>
-                <% } %>
+                <% } %> -->
             </ul>
             <ul class="navbar-nav">
                 <%= if (current_user) { %>
@@ -90,6 +107,8 @@
 
 <%= javascriptTag("application.js") %>
 </body>
+
+
 </html>
 <!--
 <a class="navbar-brand" href="<%= root_path %>">

@@ -1,6 +1,14 @@
 # For more information on using i18n see: https://github.com/nicksnyder/go-i18n
 - id: welcome_greeting
   translation: "Bienvenidos"
+- id: app-back-to-top
+  translation: "Volver arriba"
+- id: app-footer-title
+  translation: "Foro - Curso de Python"
+- id: app-footer-link-name
+  translation: "Sitio web IEEE"
+- id: app-footer-link-url
+  translation: 'https://ieeeitba.web.app/cursospython'
 - id: app-not-found
   translation: "404 Recurso no encontrado"
 - id: app-status-internal-error
@@ -11,6 +19,10 @@
   translation: "Categorias"
 - id: app-topics
   translation: "Temas"
+- id: app-pagination-displaying
+  translation: "Mostrando"
+- id: app-pagination-perpage
+  translation: "por página"
 - id: app-login
   translation: "Iniciar sesión"
 - id: app-logout
@@ -175,8 +187,8 @@
   translation: "Se editó correctamente"
 - id: delete-success
   translation: "Se eliminó correctamente"
-- id: description
-  translation: "Descripción"
+- id: of
+  translation: "de"
 - id: description
   translation: "Descripción"
 

@@ -9,8 +9,15 @@
     </div>
     <% } %>
 </div>
+<div class="row justify-content-end">
+    <div class="col-md-7">
+        <%= paginator(pagination) %>
+    </div>
+    <div class="col-md-5 text-right">
+        <%= partial("pagination-perpage.plush.html") %>
+    </div>
+</div>
 <div class="row">
-    <i class="icon user-shield" title="Edit"></i>
     <div class="col-md-8"><%= t("category-topic") %></div>
     <div class="col-md-2 text-center"><%= t("category-users") %></div>
     <div class="col-md-1 text-center"><%= t("category-replies") %></div>
@@ -44,3 +51,13 @@
 <% } %>
 
 <hr class="col-md-12 col-sm-12">
+<div class="row justify-content-center">
+    <div class="pagination-lg">
+        <%= paginator(pagination) %>
+    </div>
+
+</div>
+<div class="row justify-content-center">
+    <%= partial("pagination-perpage.plush.html") %>
+</div>
+

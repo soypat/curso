@@ -65,11 +65,13 @@ func InterpretPost(c buffalo.Context) error {
 			return  p.codeResult(c,"",T.Translate(c,"curso-python-evaluation-not-found"))
 		}
 		peval := pythonHandler{}
+		peval.userID = p.userID
 		peval.code.Source = eval.Solution
 		peval.code.Input = p.code.Input //eval.Inputs.String
 		err = peval.runPy()
 		if err != nil {
-			return  p.codeResult(c,"","Evaluation errored! "+err.Error())
+			return  p.codeResult(c,peval.Output,"Evaluation errored! "+err.Error()) // TODO this is the debug line
+			//return  p.codeResult(c,"","Evaluation errored! "+err.Error()) // TODO this is the production line
 		}
 		defer p.Put(DB, c)
 		err = p.runPy()
@@ -147,7 +149,7 @@ type pythonHandler struct {
 
 var reForbid = map[*regexp.Regexp]string{
 	regexp.MustCompile(`exec|open|write|eval|Write|globals|locals|breakpoint|getattr|memoryview|vars|super`): "forbidden function key '%s'",
-	regexp.MustCompile(`input\s*\(`):                           "no %s) to parse!",
+	//regexp.MustCompile(`input\s*\(`):                           "no %s) to parse!",
 	regexp.MustCompile("tofile|savetxt|fromfile|fromtxt|load"): "forbidden numpy function key '%s'",
 	regexp.MustCompile(`__\w+__`):                              "forbidden dunder function key '%s'",
 }
@@ -180,20 +182,11 @@ func (p *pythonHandler) runPy() (err error) {
 	}
 	defer f.Close()
 	f.Write([]byte(p.code.Source))
-	var cmd *exec.Cmd
-	if p.Input != "" {
-		inputFilename := fmt.Sprintf("tmp/%s/in.txt", p.userID)
-		fi, err2 := os.Create(inputFilename)
-		if err2 != nil {
-			return err2
- 		}
-		defer fi.Close()
-		fi.Write([]byte(p.code.Input))
-		cmd = exec.Command(pyCommand, filename,"<",inputFilename)
-	} else {
-		cmd = exec.Command(pyCommand, filename)
-	}
-
+	cmd := exec.Command(pyCommand, filename)
+	stdin, _ := cmd.StdinPipe()
+	go func() {
+		stdin.Write([]byte(p.Input+"\n"))
+	}()
 	status := make(chan pyExitStatus, 1)
 	go func() {
 		time.Sleep(pyTimeout_ms * time.Millisecond)
@@ -215,7 +208,6 @@ func (p *pythonHandler) runPy() (err error) {
 				cmd.Process.Kill()
 				return fmt.Errorf("process timed out (%dms)", pyTimeout_ms)
 			case pyError, pyOK:
-				//p.Output = string(output)
 				p.Output = strings.ReplaceAll(string(output), "\""+filename+"\",", "")
 				return
 			default:

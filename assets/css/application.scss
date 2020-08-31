@@ -7,6 +7,16 @@
 	border-radius: 50%;
 	width: 50px;
 }
+footer {
+    padding-left:10%;
+    padding-right:10%;
+    padding-bottom:1rem;
+    bottom: 0;
+    width:100%;
+}
+.pagination {
+    
+}
 
 #code, #output, pre, .lines{
     /* The default monospace font on OS X is ugly, so specify Menlo
@@ -26,7 +36,13 @@
     background: #FFD;
 }
 #banner {
-    font-style:oblique;
+    background: #a3bde6;
+    border-radius: 10px;
+    padding: 0; margin: 0;
+    font-weight: bold;
+    color: #162640;
+    font-size:16pt;
+    top:2rem;
 }
 #output, #solution {
                 border: none;

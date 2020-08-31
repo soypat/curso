@@ -14,15 +14,19 @@ if (evaluation) {
     <div class="container">
         <%= if ((evaluation)) { %>
         <div class="row">
-            <label for="input">ID del equipo: </label>
-            <input type="text" id="input" name="input">
+            <div class="col-sm-12">
+                <label for="input">ID del equipo: </label>
+                <input type="text" id="input" name="input" <%= if (current_user.Role=="admin") {%>value="1001"<% } %> >
+            </div>
+
         </div>
         <% }%>
         <div class="row" id="banner">
-            <div class="col-sm-4" id="head" itemprop="name"><%= t("curso-python-interpreter-title") %>
-                <button id="run" class="btn btn-primary btn-sm"><i class="icon-play"></i> <%= t("curso-python-interpreter-run") %></button>
+            <div class="col-sm-1" id="head" itemprop="name">
+                <button id="run" class="btn btn-primary btn-lg"><i class="icon-play"></i> <%= t("curso-python-interpreter-run") %></button>
             </div>
-            <div class="col-sm-8" id="user"><%= t("user") +": "+ current_user.Name %></div>
+            <div class="col-sm-2"><%= t("curso-python-interpreter-title") %></div>
+            <div class="col-sm-6" id="user"><%= t("user") +": "+ current_user.Name %></div>
         </div>
         <div id="wrap" class="row">
         <textarea itemprop="description" rows="16" class="lined col-sm-12"  id="code" name="code"

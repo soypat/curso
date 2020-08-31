@@ -2,14 +2,14 @@ package actions
 
 import (
 	"fmt"
+	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/render"
 	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/pkg/errors"
 	"github.com/soypat/curso/models"
 	"net/http"
-
-	"github.com/gobuffalo/buffalo"
+	"sort"
 )
 
 // CategoriesIndex default implementation.
@@ -25,10 +25,10 @@ func CategoriesIndex(c buffalo.Context) error {
 	}
 	c.Set("category", cat)
 	topics := &models.Topics{}
-	if err := tx.BelongsTo(cat).All(topics); err != nil {
+	q := tx.BelongsTo(cat).Order("updated_at desc").PaginateFromParams(c.Params())
+	if err := q.All(topics); err != nil {
 		return c.Error(404, err)
 	}
-	c.Set("topics", topics)
 	for i, t := range *topics {
 		topic, err := loadTopic(c, t.ID.String())
 		if err != nil {
@@ -36,6 +36,9 @@ func CategoriesIndex(c buffalo.Context) error {
 		}
 		(*topics)[i] = *topic
 	}
+	sort.Sort(topics)
+	c.Set("topics", topics)
+	c.Set("pagination",q.Paginator )
 	return c.Render(200, r.HTML("categories/index.plush.html"))
 	//return c.Render(http.StatusOK, r.HTML("categories/index.plush.html"))
 }

@@ -14,12 +14,12 @@
         <%= paginator(pagination) %>
     </div>
     <div class="col-md-5 text-right">
-        <%= partial("pagination-perpage.plush.html") %>
+        <%= partial("pagination-perpage.plush.html", {plural: downcase(t("app-topics")), perPage: [10,15,25]}) %>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-8"><%= t("category-topic") %></div>
-    <div class="col-md-2 text-center"><%= t("category-users") %></div>
+    <div class="col-md-6"><%= t("category-topic") %></div>
+    <div class="col-md-4 text-center"><%= t("category-users") %></div>
     <div class="col-md-1 text-center"><%= t("category-replies") %></div>
     <div class="col-md-1 text-center"><%= t("category-activity") %></div>
 </div>
@@ -32,15 +32,15 @@
 <div class="row">
     <%= if (!topic.Deleted) { %>
     <hr class="col-md-12 col-sm-12" id="<%= topic.ID %>">
-    <div class="col-md-8">
+    <div class="col-md-6">
         <a href="<%= topicGetPath( ctxTopic ) %>" class="text-secondary">
             <%= topic.Title %>
         </a>
     </div>
-    <div class="col-md-2 text-center">
+    <div class="col-md-4 text-center">
         <%= for (author) in topic.Authors() { %>
         <span class="text-secondary">
-			<img src="data:image/png;base64,<%= author.Image() %>" alt="<%= displayName(derefUser(author)) %>" style="width:50px;border-radius:50%;">
+			<%= avatar(derefUser(author)) %>
 		</span>
         <% } %>
     </div>
@@ -58,6 +58,6 @@
 
 </div>
 <div class="row justify-content-center">
-    <%= partial("pagination-perpage.plush.html") %>
+    <%= partial("pagination-perpage.plush.html", {plural: downcase(t("app-topics")), perPage: [10,15,25]}) %>
 </div>
 

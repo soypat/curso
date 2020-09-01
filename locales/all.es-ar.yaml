@@ -14,7 +14,7 @@
 - id: app-status-internal-error
   translation: "500 Error interno"
 - id: app-users
-  translation: "Ajustes de Usuario"
+  translation: "Usuarios"
 - id: app-categories
   translation: "Categorias"
 - id: app-topics
@@ -97,7 +97,7 @@
 - id: category-new-topic
   translation: "Nuevo tema"
 - id: category-users
-  translation: "Usuario"
+  translation: "Usuarios"
 - id: category-replies
   translation: "Respuestas"
 - id: category-no-topics-found
@@ -122,6 +122,8 @@
     ```
     bloque de código
     ```
+- id: new-topic-preview
+  translation: "Vista previa"
 # TOPIC BUTTONS AND FLASH
 - id: topic-edit
   translation: " "
@@ -205,6 +207,8 @@
   translation: "Evaluaciones"
 - id: curso-python-new-evaluation
   translation: "Crear evaluación"
+- id: curso-python-evaluation-stdin
+  translation: "Input estándar del corrector"
 - id: curso-python-evaluation-title-help
   translation: "El título del trabajo a hacer"
 - id: curso-python-evaluation-hidden-help

@@ -5,12 +5,14 @@
     let hidden = false
     let status = "new"
     let solution = ""
+    let input = ""
     if (evaluation) {
         content = evaluation.Content
         title  = evaluation.Title
         description  = evaluation.Description
         hidden = evaluation.Hidden
         solution = evaluation.Solution
+        input = evaluation.Inputs
         status = "edit"
     }
 %>
@@ -49,7 +51,7 @@
                 </div>
             </div>
 
-            <!-- Textarea -->
+            <!-- Textarea markdown CONTENT-->
             <div class="form-group">
                 <label class="col-md-8 control-label" for="content"><%= t("content") %></label>
                 <div class="col-md-8">
@@ -57,12 +59,20 @@
                     <span class="help-block"><%= t("curso-python-evaluation-content-help") %></span>
                 </div>
             </div>
-            <!-- Textarea -->
+            <!-- Textarea Solution-->
             <div class="form-group">
-                <label class="col-lg-4 control-label" for="solution"><%= t("curso-python-evaluation-solution") %></label>
-                <div class="col-md-4">
-                    <textarea class="form-control" id="solution" name="solution" required><%= solution %></textarea>
+                <label class="col-md-6 control-label" for="sol"><%= t("curso-python-evaluation-solution") %></label>
+                <div class="col-md-6">
+                    <textarea class="form-control" rows="7" id="sol" name="solution" placeholder="" required><%= solution %></textarea>
                     <span class="help-block"><%= t("curso-python-evaluation-solution-help") %></span>
+                </div>
+            </div>
+            <!-- Textarea STDIN-->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="stdin"><%= t("curso-python-evaluation-stdin") %></label>
+                <div class="col-md-4">
+                    <textarea class="form-control" id="stdin" name="stdin" required><%= input %></textarea>
+                    <span class="help-block">STDIN</span>
                 </div>
             </div>
             <!-- SUBMIT Button -->
@@ -75,6 +85,16 @@
 
     </div>
 </div>
+<%= partial("md.plush.html",{id_in: "content" ,id_out: "preview"}) %>
+<label><strong><%= t("new-topic-preview") %></strong></label>
+<div  id="preview">
+
+</div>
+
+<div style="margin:2rem;">
+    <%= partial("curso/interpreter.html") %>
+</div>
+
 
 <% } else {  %>
 

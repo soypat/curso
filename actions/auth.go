@@ -52,6 +52,7 @@ func AuthCallback(c buffalo.Context) error {
 		u.Email = gu.Email
 		u.Provider = gu.Provider
 		u.ProviderID = gu.UserID
+		u.AvatarURL = gu.AvatarURL
 		err = tx.Save(u)
 		if err != nil {
 			return errors.WithStack(err)

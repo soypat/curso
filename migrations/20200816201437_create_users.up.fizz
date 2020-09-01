@@ -6,6 +6,7 @@ create_table("users") {
 	t.Column("provider_id", "string", {})
 	t.Column("email", "string", {})
 	t.Column("role", "string", {})
+	t.Column("avatar_url", "string", {})
 	t.Column("subscriptions", "varchar[]", {"null": true})
 	t.Timestamps()
 }

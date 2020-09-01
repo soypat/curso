@@ -9,6 +9,7 @@ let status = "new"
             status = "edit"
         }
 %>
+<%= partial("md.plush.html",{id_in: "content" ,id_out: "preview"}) %>
 <div class="row mt-3 justify-content-center">
     <div class="col-md-12 col-sm-10" >
         <h2><%= t(status+"-topic-headline") %></h2>
@@ -25,7 +26,7 @@ let status = "new"
                     <span class="help-block"><%=t("new-topic-title-help") %></span>
                 </div>
             </div>
-            <!-- Textarea -->
+                        <!-- Textarea -->
             <div class="form-group">
                 <label class="col-md-8 control-label" for="content"><%= t("content") %></label>
                 <div class="col-md-8" >
@@ -41,6 +42,11 @@ let status = "new"
 
         </fieldset>
         </form>
+
+        <label><strong><%= t("new-topic-preview") %></strong></label>
+        <div  id="preview">
+
+        </div>
 
     </div>
 </div>

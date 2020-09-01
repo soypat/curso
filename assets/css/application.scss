@@ -7,6 +7,10 @@
 	border-radius: 50%;
 	width: 50px;
 }
+.avatar-img {
+    border-radius: 50%;
+    height:28px;
+}
 footer {
     padding-left:10%;
     padding-right:10%;
@@ -14,8 +18,11 @@ footer {
     bottom: 0;
     width:100%;
 }
-.pagination {
-    
+.help-block {
+    color: grey;
+}
+.form-group > label {
+    font-weight: 600;
 }
 
 #code, #output, pre, .lines{
@@ -66,6 +73,9 @@ footer {
     resize: none;
     wrap: off;
     float: right;
+}
+#preview {
+background: lightgray;
 }
 .lines {
     padding-top: 0;

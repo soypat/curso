@@ -66,14 +66,15 @@ func InterpretPost(c buffalo.Context) error {
 		}
 		peval := pythonHandler{}
 		peval.userID = p.userID
-		peval.code.Source = eval.Solution
-		peval.code.Input = p.code.Input //eval.Inputs.String
+		peval.Source = eval.Solution
+		peval.Input = p.Input //eval.Inputs.String
 		err = peval.runPy()
 		if err != nil {
 			return  p.codeResult(c,peval.Output,"Evaluation errored! "+err.Error()) // TODO this is the debug line
 			//return  p.codeResult(c,"","Evaluation errored! "+err.Error()) // TODO this is the production line
 		}
 		defer p.Put(DB, c)
+		p.Input = eval.Inputs.String
 		err = p.runPy()
 		if err != nil {
 			return p.codeResult(c, "", err.Error())

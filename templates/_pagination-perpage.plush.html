@@ -1,15 +1,10 @@
-<% let plural = t("app-topics")
-let ppage1 = 10
-let ppage2 = 15
-let ppage3 = 25
-%>
 <div class="pagination-label">
     <span class="opacity"><%= t("app-pagination-displaying") %> <%= pagination.Offset + 1 %> - <%= pagination.Offset + pagination.CurrentEntriesSize %> <%= t("of")%> <%= pagination.TotalEntriesSize %> <%= plural %></span>
     <i class="per-page-separator">|</i>
     <span class="per-page-<%= pagination.PerPage %>">
-        <a href="<%= current_path %>?per_page=<%= ppage1 %>"><i class="opacity per-page-option"><%= ppage1 %></i></a>
-        <a href="<%= current_path %>?per_page=<%= ppage2 %>"><i class="opacity per-page-option"><%= ppage2 %></i></a>
-        <a href="<%= current_path %>?per_page=<%= ppage3 %>"><i class="opacity per-page-option"><%= ppage3 %></i></a>
+        <%= for (val) in perPage { %>
+        <a href="<%= current_path %>?per_page=<%= val %>"><i class="opacity per-page-option"><%= val %></i></a>
+        <% } %>
         <i class="opacity"><%= plural + " " + t("app-pagination-perpage") %></i>
     </span>
 </div>

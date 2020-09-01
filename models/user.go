@@ -5,9 +5,9 @@ import (
 	"github.com/gobuffalo/pop/v5"
 	"github.com/gobuffalo/pop/v5/slices"
 	"github.com/gobuffalo/validate/v3"
+	"github.com/gobuffalo/validate/v3/validators"
 	"github.com/gofrs/uuid"
 	"time"
-	"github.com/gobuffalo/validate/v3/validators"
 )
 
 // User is used by pop to map your users database table to your go code.
@@ -19,6 +19,7 @@ type User struct {
 	ProviderID    string      `json:"provider_id" db:"provider_id"`
 	Email         string      `json:"email" db:"email"`
 	Role          string      `json:"role" db:"role"`
+	AvatarURL     string      `json:"avatar" db:"avatar_url"`
 	Subscriptions slices.UUID `json:"subscriptions" db:"subscriptions"`
 	CreatedAt     time.Time   `json:"created_at" db:"created_at"`
 	UpdatedAt     time.Time   `json:"updated_at" db:"updated_at"`
@@ -28,6 +29,10 @@ type User struct {
 func (u User) String() string {
 	ju, _ := json.Marshal(u)
 	return string(ju)
+}
+
+func (u User) ImageSrc() string {
+	return u.AvatarURL
 }
 
 func (u User) IsAuthor(id uuid.UUID) bool {

@@ -18,7 +18,7 @@ type Evaluation struct {
     Solution string `json:"solution" db:"solution" form:"solution"`
     Hidden bool `json:"hidden" db:"hidden" form:"hidden"`
     Deleted bool `json:"deleted" db:"deleted" form:"deleted"`
-    Inputs nulls.String `json:"inputs" db:"inputs" form:"inputs"`
+    Inputs nulls.String `json:"inputs" db:"inputs" form:"stdin"`
     CreatedAt time.Time `json:"created_at" db:"created_at"`
     UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }

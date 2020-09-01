@@ -15,6 +15,14 @@
   translation: "500 Error interno"
 - id: app-users
   translation: "Usuarios"
+- id: app-user
+  translation: "Usuario"
+- id: app-user-email
+  translation: "Email"
+- id: app-user-role
+  translation: "Rol"
+- id: app-user-role-actions
+  translation: "Cambiar rol"
 - id: app-categories
   translation: "Categorias"
 - id: app-topics
@@ -242,10 +250,12 @@
   translation: "DB"
 - id: curso-python-input-field-error
   translation: "Hubo un error procesando su número de equipo ingresado. Asegurese de que sea un número entero sin decimales."
-- id: placeholder
-  translation: "placeholder"
-- id: placeholder
-  translation: "placeholder"
+- id: curso-python-interpreter-placeholder
+  translation: "print(\"hello-world\")"
+
+# Safelist
+- id: safelist-user-not-found
+  translation: "Su email no está entre los permitidos. Si cree que es un error por favor comuníquese con los administradores"
 - id: placeholder
   translation: "placeholder"
 

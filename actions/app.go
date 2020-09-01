@@ -63,6 +63,7 @@ func App() *buffalo.App {
 		// -- Authorization/Security procedures --
 		// sets user data in context from session data.
 		app.Use(SetCurrentUser)
+
 		app.Use(SiteStruct)
 		app.GET("/auth",AuthHome)
 		bah := buffalo.WrapHandlerFunc(gothic.BeginAuthHandler) // Begin authorization handler = bah
@@ -73,6 +74,7 @@ func App() *buffalo.App {
 		auth.Middleware.Skip(Authorize, bah, AuthCallback) // don't ask for authorization on authorization page
 		auth.Middleware.Skip(SetCurrentUser,bah, AuthCallback) // set current user needs to seek user in db. if no users present in db setcurrentuser fails
 		auth.DELETE("/logout", AuthDestroy).Name("logout")
+
 		app.GET("/u",UserSettingsGet).Name("userSettings")
 		app.POST("/u",UserSettingsPost)
 
@@ -81,6 +83,7 @@ func App() *buffalo.App {
 		app.GET("/f", NotFound)
 
 		curso := app.Group("/curso-python")
+		curso.Use(SafeList)
 		curso.GET("/eval",EvaluationIndex).Name("evaluation")
 		curso.GET("/eval/create",CursoEvaluationCreateGet).Name("evaluationCreate")
 		curso.POST("/eval/create",CursoEvaluationCreatePost)
@@ -108,6 +111,7 @@ func App() *buffalo.App {
 
 
 		topicGroup := catGroup.Group("/{tid}")
+		topicGroup.Use(SafeList)
 		topicGroup.Use(SetCurrentTopic)
 		topicGroup.GET("/",TopicGet).Name("topicGet") //
 		topicGroup.GET("/edit", TopicEditGet).Name("topicEdit")
@@ -128,6 +132,11 @@ func App() *buffalo.App {
 		admin.GET("newforum",createForum)
 		admin.POST("newforum/post", createForumPost)
 		admin.GET("/cbu", pyDBBackup).Name("cursoCodeBackup")
+		admin.GET("users", UsersViewAllGet).Name("allUsers")
+		admin.GET("users/{uid}/ban", BanUserGet).Name("banUser")
+		admin.GET("users/{uid}/admin", AdminUserGet).Name("adminUser")
+		admin.GET("users/{uid}/normalize", NormalizeUserGet).Name("normalizeUser")
+
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 

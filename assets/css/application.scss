@@ -25,6 +25,11 @@ footer {
     font-weight: 600;
 }
 
+#preview {
+    background: lightgray;
+}
+
+/* INTERPRETER + JQUERY LINED AREA */
 #code, #output, pre, .lines{
     /* The default monospace font on OS X is ugly, so specify Menlo
      * instead. On other systems the default monospace font will be used. */
@@ -74,9 +79,7 @@ footer {
     wrap: off;
     float: right;
 }
-#preview {
-background: lightgray;
-}
+
 .lines {
     padding-top: 0;
     float: left;

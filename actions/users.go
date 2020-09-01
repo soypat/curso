@@ -10,6 +10,62 @@ import (
 	"strings"
 )
 
+func UsersViewAllGet(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	users := &models.Users{}
+	if err := tx.All(users); err != nil {
+		return errors.WithStack(err)
+	}
+	c.Set("users", users)
+	return c.Render(200, r.HTML("users/view-all.plush.html"))
+}
+
+func AdminUserGet(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	adminuser := &models.User{}
+	q := tx.Where("id = ?", c.Param("uid"))
+	if err := q.First(adminuser); err != nil {
+		return errors.WithStack(err)
+	}
+	adminuser.Role = "admin"
+	if err:=tx.Update(adminuser); err != nil {
+		return errors.WithStack(err)
+	}
+	c.Flash().Add("success",fmt.Sprintf("user %s is now admin", adminuser.Name))
+	return c.Redirect(302, "allUsersPath()")
+}
+
+func NormalizeUserGet(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	adminuser := &models.User{}
+	q := tx.Where("id = ?", c.Param("uid"))
+	if err := q.First(adminuser); err != nil {
+		return errors.WithStack(err)
+	}
+	adminuser.Role = ""
+	if err:=tx.Update(adminuser); err != nil {
+		return errors.WithStack(err)
+	}
+	c.Flash().Add("success",fmt.Sprintf("user %s has been normalized", adminuser.Name))
+	return c.Redirect(302, "allUsersPath()")
+}
+
+func BanUserGet(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	banuser := &models.User{}
+	q := tx.Where("id = ?", c.Param("uid"))
+	if err := q.First(banuser); err != nil {
+		return errors.WithStack(err)
+	}
+	banuser.Role = "banned"
+	if err:=tx.Update(banuser); err != nil {
+		return errors.WithStack(err)
+	}
+	c.Flash().Add("success",fmt.Sprintf("user %s banned",banuser.Name))
+	return c.Redirect(302, "allUsersPath()")
+
+}
+
 func UserSettingsGet(c buffalo.Context) error {
 	return c.Render(200, r.HTML("users/settings.plush.html"))
 }

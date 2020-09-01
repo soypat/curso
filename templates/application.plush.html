@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
@@ -54,11 +54,11 @@
                     <a class="nav-link" href="<%= evaluationPath() %>"><%= t("curso-python-evaluator") %></a>
                 </li>
                 <% } %>
-             <!--   <%= if (current_user && current_user.Role == "admin") { %>
+                <%= if (current_user && current_user.Role == "admin") { %>
                 <li class="nav-item">
-                    <a class="nav-link" href="<%= user_settings_path %>"><%= t("app-users") %></a>
+                    <a class="nav-link" href="<%= allUsersPath() %>"><%= t("app-users") %></a>
                 </li>
-                <% } %> -->
+                <% } %>
             </ul>
             <ul class="navbar-nav">
                 <%= if (current_user) { %>
@@ -72,8 +72,9 @@
                         <button type="button" class="btn btn-light" data-toggle="dropdown">
                            <!-- <img src="data:image/png;base64,<%= current_user.Image() %>"
                                  alt="<%= current_user.Name %>" style="width:50px;" class="img-circle"> -->
-                            <%= if (current_user.Role == "admin") { %><i class="icon-shield"> <% } else { %> <i class="icon-user"><% }%>
-                            </i> <%= displayName(current_user) %>
+
+                            <%= current_user.Icon(displayName(current_user))%>
+
                             <i class="icon-caret-down"></i>
                         </button>
                         <div class="dropdown-menu">

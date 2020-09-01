@@ -9,7 +9,7 @@
         }
         $(document).delegate('#<%= id_in %>', 'keyup', function (e) { //inputTypeElem.addEventListener('keyup', handleInputChange);
             var keyCode = e.keyCode || e.which;
-            if (keyCode == 13) {
+            if (keyCode == 13 || keyCode == 8) { // http://gcctech.org/csc/javascript/javascript_keycodes.htm
                 render();
             }
         });

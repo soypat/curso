@@ -2,12 +2,16 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/gobuffalo/flect"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/gobuffalo/pop/v5/slices"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gobuffalo/validate/v3/validators"
 	"github.com/gofrs/uuid"
+	"html/template"
 	"time"
+
 )
 
 // User is used by pop to map your users database table to your go code.
@@ -31,6 +35,20 @@ func (u User) String() string {
 	return string(ju)
 }
 
+func (u User) Icon(label string) template.HTML {
+	var icon string
+	switch u.Role {
+	case "admin":
+		icon = "shield"
+	case "banned":
+		icon = "ban-circle"
+	default:
+		icon = "user"
+	}
+	return template.HTML( fmt.Sprintf("<i class=\"icon-%s\"> </i>%s",icon, flect.Capitalize(label)) )
+}
+
+// for now just return u.AvatarURL
 func (u User) ImageSrc() string {
 	return u.AvatarURL
 }

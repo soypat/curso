@@ -130,6 +130,9 @@ func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 				c.Logger().Error("error in setCurrent user while looking for uuid in tx")
 				return next(c)
 			}
+			if u.Role == "banned" {
+				return c.Redirect(302,"https://ieeeitba.web.app/cursospython")
+			}
 			c.Set("current_user", u)
 		}
 		c.Logger().Debug("SetCurrentUser finished succesfully")

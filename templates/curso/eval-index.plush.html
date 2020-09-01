@@ -29,7 +29,7 @@ let ctxEval = {evalid: eval.ID}%>
     <hr class="col-md-12 col-sm-12" id="<%= eval.ID %>">
     <div class="col-md-8">
         <a href="<%= evaluationGetPath( ctxEval ) %>" class="text-secondary">
-            <%= eval.Title %>
+          <%= if (eval.Hidden) { %> <i class="icon-eye-close"></i> <% }%>  <%= eval.Title %>
         </a>
     </div>
 

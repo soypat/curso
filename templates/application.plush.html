@@ -25,7 +25,6 @@
     <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/highlight.min.js"></script>
     <script>
         var RENDERERS = [];
-
         RENDERERS.push(renderCodeBlock)
         // iterates over RENDER and executes rendering tasks
         // RENDER contains all rendering functions.
@@ -36,17 +35,36 @@
             }
         }
         function renderCodeBlock() {
-            document.querySelectorAll('code').forEach((block) => {
+            document.querySelectorAll('code , .highlight').forEach((block) => {
                 hljs.highlightBlock(block);
             });
         }
         document.addEventListener('DOMContentLoaded', (event) => {
             document.querySelectorAll('code').forEach((block) => {
-                block.setAttribute("class","language-python");
+                if (!block.hasAttribute("class")) {
+                    block.setAttribute("class","language-python");
+                }
                 render(RENDERERS);
             });
-
-        });</script>
+            render(RENDERERS);
+        });
+        // Use tabs in content/markdowny textareas
+        $(document).delegate('#content', 'keydown', function (e) {
+            var keyCode = e.keyCode || e.which;
+            if (keyCode == 9) {
+                e.preventDefault();
+                var start = this.selectionStart;
+                var end = this.selectionEnd;
+                // set textarea value to: text before caret + tab + text after caret
+                $(this).val($(this).val().substring(0, start)
+                    + "\t"
+                    + $(this).val().substring(end));
+                // put caret at right position again
+                this.selectionStart =
+                    this.selectionEnd = start + 1;
+            }
+        });
+    </script>
 </head>
 <body>
 <div class="container">

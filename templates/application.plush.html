@@ -151,10 +151,16 @@
     <%= partial("flash.html") %>
     <%= yield %>
 </div>
-<footer class="row">
-    <p class="col-sm-3"><a href="#"><%= t("app-back-to-top") %></a></p>
-    <p class="col-sm-5" style="color:lightgray;">Presentado/Desarrollado con &heartsuit; en whittileaks</p>
-    <p class="col-sm-4"><%= t("app-footer-title") %> &middot; <a href="<%= t("app-footer-link-url") %>"><%= t("app-footer-link-name") %></a> <!--&middot; <a href="#">Terms</a>--></p>
+<footer class="container">
+    <div class="row">
+        <p class="col-sm-8"><%= t("app-footer-title") %> &middot; <a href="<%= t("app-footer-link-url") %>"><%= t("app-footer-link-name") %></a> <!--&middot; <a href="#">Terms</a>--></p>
+        <p class="col-sm-4"><a href="#"><%= t("app-back-to-top") %></a></p>
+    </div>
+    <div class="row">
+        <p class="col-12 col-sm-12 text-center" style="color:lightgray;">Presentado/Desarrollado con &heartsuit; en whittileaks</p>
+    </div>
+
+
 </footer>
 <%= javascriptTag("application.js") %>
 </body>

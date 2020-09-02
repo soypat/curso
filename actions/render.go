@@ -41,6 +41,9 @@ func init() {
 			"codeTheme":            codeTheme,
 			"codeThemeFormOptions": codeThemeOptions,
 			"avatar": func(user *models.User) template.HTML { // style="height:28px;border-radius:50%;"
+				if user.Role == "admin" {
+					return template.HTML(fmt.Sprintf(`<img src="%s" img title="%s" alt="%s" class="avatar-img admin">`, user.ImageSrc(), displayName(user), displayName(user)))
+				}
 				return template.HTML(fmt.Sprintf(`<img src="%s" img title="%s" alt="%s" class="avatar-img">`, user.ImageSrc(), displayName(user), displayName(user)))
 			},
 		},

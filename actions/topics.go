@@ -41,6 +41,7 @@ func TopicCreatePost(c buffalo.Context) error {
 		c.Flash().Add("danger","Error while seeking category")
 		return c.Redirect(302,"forumPath()")
 	}
+
 	topic.Category = cat
 	topic.AuthorID = topic.Author.ID
 	topic.CategoryID = topic.Category.ID
@@ -59,6 +60,7 @@ func TopicCreatePost(c buffalo.Context) error {
 	//if err != nil {
 	//	return errors.WithStack(err)
 	//}
+	_ = tx.UpdateColumns(cat,"updated_at")
 	f := c.Value("forum").(*models.Forum)
 	c.Logger().Info("TopicCreatePost finished success")
 	c.Flash().Add("success", T.Translate(c,"topic-add-success"))
@@ -102,20 +104,25 @@ func loadTopic(c buffalo.Context, tid string) (*models.Topic, error) {
 	tx := c.Value("tx").(*pop.Connection)
 	topic := &models.Topic{}
 	if err := c.Bind(topic); err != nil {
+		c.Logger().Errorf("'c.Bind(topic)' FAILED!",topic)
 		return nil, errors.WithStack(err)
 	}
 	if err := tx.Find(topic, tid); err != nil {
+		c.Logger().Errorf("'tx.Find(%s, %s)' FAILED!",topic,tid)
 		return nil, c.Error(404, err)
 	}
 	cat := new(models.Category)
 	if err := tx.Find(cat, topic.CategoryID); err != nil {
+		c.Logger().Errorf("'tx.Find(cat, %s)' FAILED!",topic.CategoryID)
 		return nil, c.Error(404, err)
 	}
 	usr := new(models.User)
 	if err := tx.Find(usr, topic.AuthorID); err != nil {
+		c.Logger().Errorf("'tx.Find(usr, %s)' FAILED!",topic.AuthorID)
 		return nil, c.Error(404, err)
 	}
 	if err := tx.BelongsTo(topic).All(&topic.Replies); err != nil {
+		c.Logger().Errorf("'tx.BelongsTo(%s).All(&topic.Replies)' FAILED!",topic)
 		return nil, c.Error(404, err)
 	}
 	topic.Category = cat
@@ -124,6 +131,7 @@ func loadTopic(c buffalo.Context, tid string) (*models.Topic, error) {
 	for i := range topic.Replies {
 		reply, err := loadReply(c, topic.Replies[i].ID.String())
 		if err != nil {
+			c.Logger().Errorf("'loadReply(c, %s)' FAILED!",topic.Replies[i].ID.String())
 			return nil, c.Error(404, err)
 		}
 		if reply.Deleted {

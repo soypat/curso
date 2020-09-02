@@ -17,12 +17,13 @@ import (
 
 // ENV is used to help switch settings based on where the
 // application is being run. Default is "development".
-// GO_END = production for deployment
+// GO_ENV = "production" for deployment
 var ENV = envy.Get("GO_ENV", "development")
 var app *buffalo.App
 var T *i18n.Translator
 
 const hourDiffUTC = 3 // how many hours behind is UTC respect to current time. Argentina == 3h
+
 // App is where all routes and middleware for buffalo
 // should be defined. This is the nerve center of your
 // application.
@@ -131,11 +132,14 @@ func App() *buffalo.App {
 		admin.GET("/f", manageForum)
 		admin.GET("newforum",createForum)
 		admin.POST("newforum/post", createForumPost)
-		admin.GET("/cbu", pyDBBackup).Name("cursoCodeBackup")
+
 		admin.GET("users", UsersViewAllGet).Name("allUsers")
 		admin.GET("users/{uid}/ban", BanUserGet).Name("banUser")
 		admin.GET("users/{uid}/admin", AdminUserGet).Name("adminUser")
 		admin.GET("users/{uid}/normalize", NormalizeUserGet).Name("normalizeUser")
+
+		admin.GET("/cbu", pyDBBackup).Name("cursoCodeBackup")
+		admin.GET("/cbureader", zipAssetFolder("uploadReader")).Name("cursoCodeBackupReader")
 
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
@@ -149,7 +153,7 @@ func App() *buffalo.App {
 // for more information: https://gobuffalo.io/en/docs/localization
 func translations() buffalo.MiddlewareFunc {
 	var err error
-	if T, err = i18n.New(packr.New("app:locales", "../locales"), "es-es"); err != nil {
+	if T, err = i18n.New(packr.New("app:locales", "../locales"), "es-ar"); err != nil {
 		app.Stop(err)
 	}
 	return T.Middleware()

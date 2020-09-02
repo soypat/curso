@@ -21,17 +21,20 @@ func CategoriesIndex(c buffalo.Context) error {
 
 	err:=tx.Where("title = ?",catTitle).First(cat)
 	if  err != nil {
+		c.Logger().Warnf("'where title = %s' FAILED!",catTitle)
 		return c.Error(404, err)
 	}
 	c.Set("category", cat)
 	topics := &models.Topics{}
 	q := tx.BelongsTo(cat).Order("updated_at desc").PaginateFromParams(c.Params())
 	if err := q.All(topics); err != nil {
+		c.Logger().Warnf("'tx.BelongsTo(cat).Order(\"updated_at desc\").PaginateFromParams(c.Params())' FAILED!")
 		return c.Error(404, err)
 	}
 	for i, t := range *topics {
 		topic, err := loadTopic(c, t.ID.String())
 		if err != nil {
+			c.Logger().Errorf("'loadTopic(c, %s)' FAILED!",t.ID.String())
 			return errors.WithStack(err)
 		}
 		(*topics)[i] = *topic

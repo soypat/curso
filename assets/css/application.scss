@@ -11,11 +11,13 @@
     border-radius: 50%;
     height:28px;
 }
-code , .highlight {
+.hljs {/*code , .highlight { */
     border-style: solid ;
     border-radius: 10px;
     border-color: lightgray;
     border-width: thin;
+    overflow: scroll;
+    max-height: 22rem;
 }
 footer {
     padding-left:10%;

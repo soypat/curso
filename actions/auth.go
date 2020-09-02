@@ -33,7 +33,8 @@ func AuthCallback(c buffalo.Context) error {
 	c.Logger().Debug("AuthCallback called")
 	gu, err := gothic.CompleteUserAuth(c.Response(), c.Request())
 	if err != nil {
-		return c.Error(401, err)
+		c.Flash().Add("danger",T.Translate(c,"app-auth-error"))
+		return c.Redirect(302,"/")//c.Error(401, err)
 	}
 	tx := c.Value("tx").(*pop.Connection)
 	q := tx.Where("provider = ? and provider_id = ?", gu.Provider, gu.UserID)

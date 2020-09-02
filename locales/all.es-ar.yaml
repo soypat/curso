@@ -35,6 +35,8 @@
   translation: "Iniciar sesión"
 - id: app-logout
   translation: "Cerrar sesión"
+- id: app-auth-error
+  translation: "No se pudo completar la autenticacion de usuario"
 - id: app-settings
   translation: "Configuración"
 - id: app-request-login

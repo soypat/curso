@@ -3,7 +3,7 @@ let ctx = {evalid: evaluation.ID}
 %>
 
 <h5><%= t("curso-python-evaluations-title") %></h5>
-<div class="row">
+<div class="row" style="margin-bottom: 3rem;">
     <h2><%= evaluation.Title %></h2>
 
     <div class="col-md-8 mt-3 offset-md-2">
@@ -23,8 +23,12 @@ let ctx = {evalid: evaluation.ID}
     </div>
     <% } %>
 </div>
-    <textarea wrap="off" class="lined col-sm-12" rows="10" id="solution" disabled># Solución <%= evaluation.Title %> (invisible a usuarios comunes)
-<%=evaluation.Solution %></textarea>
+<%= if (current_user.Role == "admin") { %>
+<div class="row">
+    <pre class="col-md-12"><code class="col-md-7" style="height:12rem;"># Solución <%= evaluation.Title %> (invisible a usuarios comunes)
+<%=evaluation.Solution %></code></pre>
+</div>
+<% } %>
 
     <%= partial("curso/interpreter.html") %>
 

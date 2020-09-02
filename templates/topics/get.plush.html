@@ -14,7 +14,7 @@
     <div class="col-md-8 mt-3 offset-md-1">
         <%= markdown(topic.Content) %>
     </div>
-    <div class="offset-7"><span style="font-size: 80%;"><%=t("topic-author-intro")+" "%> </span><%=  displayName(topic.Author) %></div>
+    <div class="offset-7"><span style="font-size: 80%;"><%=t("topic-author-intro")+" "%> </span><%=avatar(topic.Author)%> <%=displayName(topic.Author)%></div>
     <div class="col-md-2 mt-3 offset-md-8 text-right">
         <%= if (current_user.IsAuthor(topic.AuthorID) || current_user.Role == "admin" ){ %>
         <%= if (len(topic.Replies) == 0 || current_user.Role == "admin") { %>

@@ -40,6 +40,7 @@ func forumIndex(c buffalo.Context) error {
 	//if err := tx.BelongsTo(forum).All(cats); err != nil {
 	//	return c.Error(404, err)
 	//}
+
 	q := tx.PaginateFromParams(c.Params()).Where("parent_category = ?",forum.ID)
 	err := q.All(cats)
 	if err != nil {

@@ -133,6 +133,7 @@ func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 			if u.Role == "banned" {
 				return c.Redirect(302,"https://ieeeitba.web.app/cursospython")
 			}
+			u.Theme = fmt.Sprintf("%s",c.Session().Get("code_theme"))
 			c.Set("current_user", u)
 		}
 		c.Logger().Debug("SetCurrentUser finished succesfully")

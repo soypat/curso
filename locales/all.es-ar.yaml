@@ -68,8 +68,18 @@
   translation: "El apodo no puede ser vacío"
 - id: user-settings-nick-invalid
   translation: "El apodo no puede tener más de 10 caracteres (alfanuméricos)"
-- id: user-settings-nick-edit-success
-  translation: "Se cambió el apodo correctamente"
+- id: user-settings-edit-success
+  translation: "Se registraron los cambios correctamente"
+- id: user-settings-theme
+  translation: "Estilo del código"
+- id: user-settings-theme-sample-code
+  translation: |
+    def love(isAll):
+      return None
+
+    if x == True: # puede ser más simple?
+      for y in love("with that"):
+        x += y + 12345
 
 # Admin stuff
 - id: new-forum

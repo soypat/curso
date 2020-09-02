@@ -27,6 +27,8 @@ type User struct {
 	Subscriptions slices.UUID `json:"subscriptions" db:"subscriptions"`
 	CreatedAt     time.Time   `json:"created_at" db:"created_at"`
 	UpdatedAt     time.Time   `json:"updated_at" db:"updated_at"`
+
+	Theme string `db:"-" json:"-" form:"code-theme"`
 }
 
 // String is not required by pop and may be deleted

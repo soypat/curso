@@ -8,6 +8,7 @@ import (
 	"github.com/soypat/curso/models"
 	"html/template"
 	"math"
+	"sort"
 	"strings"
 	"time"
 )
@@ -37,6 +38,8 @@ func init() {
 			"csrf": func() template.HTML {
 				return template.HTML("<input name=\"authenticity_token\" value=\"<%= authenticity_token %>\" type=\"hidden\">")
 			},
+			"codeTheme":            codeTheme,
+			"codeThemeFormOptions": codeThemeOptions,
 			"avatar": func(user *models.User) template.HTML { // style="height:28px;border-radius:50%;"
 				return template.HTML(fmt.Sprintf(`<img src="%s" img title="%s" alt="%s" class="avatar-img">`, user.ImageSrc(), displayName(user), displayName(user)))
 			},
@@ -82,4 +85,69 @@ func timeSince(created time.Time, ctx plush.HelperContext) string {
 		return fmt.Sprintf("%dm", int(delta.Minutes()))
 	}
 	return fmt.Sprintf("%ds", int(delta.Seconds()))
+}
+
+const defaultTheme = "idea" //"idea"
+const defaultThemeURL = "//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/idea.min.css"
+
+var codeThemes = map[string]string{
+	"default":                  "//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/default.min.css",
+	"android-studio (dark)":    "//cdn.jsdelivr.net/npm/highlight.js@10.1.2/styles/androidstudio.css",
+	defaultTheme:               defaultThemeURL,
+	"darcula":                  "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/darcula.min.css",
+	"github":                   "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css",
+	"github gist":              "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github-gist.min.css",
+	"kimbie dark":              "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/kimbie.dark.min.css",
+	"lightfair":                "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/lightfair.min.css",
+	"monokai-sublime (dark)":   "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/monokai-sublime.min.css",
+	"escuela":                  "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/school-book.min.css",
+	"solarized (dark)":         "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/solarized-dark.min.css",
+	"solarized":                "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/solarized-light.min.css",
+	"zenburn (dark)":           "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/zenburn.min.css",
+	"vs":                       "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/vs.min.css",
+	"xt256 (dark)":             "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/xt256.min.css",
+	"gradient dark":            "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/gradient-dark.min.css",
+	"grayscale":                "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/grayscale.min.css",
+	"gml":                      "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/gml.min.css",
+	"dark":                     "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/dark.min.css",
+	"a 11 y dark":              "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/a11y-dark.min.css",
+	"tomorrow night blue":      "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/tomorrow-night-blue.min.css",
+	"tomorrow night eighties":  "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/tomorrow-night-eighties.min.css",
+	"tomorrow":                 "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/tomorrow.min.css",
+	"xcode":                    "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/xcode.min.css",
+	"railscasts":               "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/railscasts.min.css",
+	"pojoaque":                 "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/pojoaque.min.css",
+	"qt creator dark":          "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/qtcreator_dark.min.css",
+	"qt creator light":         "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/qtcreator_light.min.css",
+	"shades of purple":         "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/shades-of-purple.min.css",
+	"atelier plateau dark":     "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/atelier-plateau-dark.min.css",
+	"atelier seaside dark":     "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/atelier-seaside-dark.min.css",
+	"atelier sulphurpool dark": "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/atelier-sulphurpool-dark.min.css",
+	"atom one dark reasonable": "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/atom-one-dark-reasonable.min.css",
+	"atom one dark":            "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/atom-one-dark.min.css",
+	"atom one light":           "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/atom-one-light.min.css",
+	"far":                      "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/far.min.css",
+	"dracula":                  "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/dracula.min.css",
+	"purebasic":                "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/purebasic.min.css",
+}
+
+func codeTheme(theme string) template.HTML {
+	url, present := codeThemes[theme]
+	if !present {
+		url = defaultThemeURL
+	}
+	return template.HTML(fmt.Sprintf(`<link rel="stylesheet" href="%s">`, url))
+}
+
+func codeThemeOptions(u *models.User) template.HTML {
+	var form []string
+	for name, _ := range codeThemes {
+		if name == u.Theme || (u.Theme == "" && name == defaultTheme) {
+			form = append(form, fmt.Sprintf("<option name=\"%s\" selected>%s</option>", name, name))
+		} else {
+			form = append(form, fmt.Sprintf("<option name=\"%s\">%s</option>", name, name))
+		}
+	}
+	sort.Strings(form)
+	return template.HTML(strings.Join(form, "\n"))
 }

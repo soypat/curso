@@ -14,6 +14,18 @@
                 <span class="help-block"><%=t("user-settings-nick-help") %></span>
             </div>
         </div>
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="code-theme"><%= t("user-settings-theme") %></label>
+            <div class="row">
+                <select class="form-control col-md-4  form-control-md" name="code-theme">
+                    <%= codeThemeFormOptions(current_user) %>
+                </select>
+                <div class="col-md-4">
+                    <pre><code><%= t("user-settings-theme-sample-code") %></code></pre>
+                </div>
+            </div>
+
+        </div>
         <!-- SUBMIT Button -->
         <div class="col-md-4">
             <button id="submit" class="btn btn-primary"><%= t("submit") %></button>

@@ -82,6 +82,7 @@ func UserSettingsPost(c buffalo.Context) error {
 		c.Flash().Add("danger",T.Translate(c,"user-settings-nick-invalid"))
 		return c.Redirect(302, "userSettingsPath()")
 	}
+	c.Session().Set("code_theme",user.Theme)
 	user.Nick = s
 	if userDB.Nick == "" && user.Nick == "" {
 		c.Flash().Add("danger",T.Translate(c, "user-settings-nick-empty"))
@@ -91,7 +92,7 @@ func UserSettingsPost(c buffalo.Context) error {
 	if err := tx.Update(userDB); err != nil {
 		return errors.WithStack(err)
 	}
-	c.Flash().Add("success", T.Translate(c,"user-settings-nick-edit-success"))
+	c.Flash().Add("success", T.Translate(c,"user-settings-edit-success"))
 	return c.Redirect(302, "userSettingsPath()") //return c.Redirect(302, "topicGetPath()", render.Data{"forum_title":f.Title, "cat_title":c.Param("cat_title"),
 		// "tid":c.Param("tid")})
 }

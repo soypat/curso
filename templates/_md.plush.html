@@ -1,18 +1,21 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" ></script>
 <script >
+    RENDERERS.push(renderMD)
+    var inputTypeElem = document.getElementById('<%= id_in %>');
+    var outputTypeElem = document.getElementById('<%= id_out %>');
     window.onload=function(){
-        var inputTypeElem = document.getElementById('<%= id_in %>');
-        var outputTypeElem = document.getElementById('<%= id_out %>');
-        function render() {
-            outputTypeElem.innerHTML = marked(inputTypeElem.value);
-            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-        }
+        inputTypeElem = document.getElementById('<%= id_in %>');
+        outputTypeElem = document.getElementById('<%= id_out %>');
         $(document).delegate('#<%= id_in %>', 'keyup', function (e) { //inputTypeElem.addEventListener('keyup', handleInputChange);
             var keyCode = e.keyCode || e.which;
             if (keyCode == 13 || keyCode == 8) { // http://gcctech.org/csc/javascript/javascript_keycodes.htm
-                render();
+                render(RENDERERS);
             }
         });
-        render(); // loading upon entry if needed
+        render(RENDERERS); // loading upon entry if needed
+    }
+    function renderMD() {
+        outputTypeElem.innerHTML = marked(inputTypeElem.value);
+        MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
     }
 </script>

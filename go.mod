@@ -1,5 +1,5 @@
 module github.com/soypat/curso
-// +heroku goVersion go1.14
+// +heroku goVersion go1.14.3
 go 1.14
 
 require (

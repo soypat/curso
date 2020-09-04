@@ -264,7 +264,8 @@
   translation: "Hubo un error procesando su número de equipo ingresado. Asegurese de que sea un número entero sin decimales."
 - id: curso-python-interpreter-placeholder
   translation: "print(\"hello-world\")"
-
+- id: interpreter-tab
+  translation: "   "
 # Safelist
 - id: safelist-user-not-found
   translation: "Su email no está entre los permitidos. Si cree que es un error por favor comuníquese con los administradores"

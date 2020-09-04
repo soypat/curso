@@ -5,6 +5,7 @@ let evalid = ""
 if (evaluation) {
     evalid = evaluation.ID
 }
+let tab = t("interpreter-tab")
 %>
 <form id="interpreter" action="<%= interpretPath() %>" method="POST" enctype="multipart/form-data">
     <%= csrf() %>
@@ -16,7 +17,7 @@ if (evaluation) {
         <div class="row">
             <div class="col-sm-12">
                 <label for="input">ID del equipo: </label>
-                <input type="text" id="input" name="input" <%= if (current_user.Role=="admin") {%>value="1001"<% } %> >
+                <input type="text" id="input" name="input" <%= if (current_user.Role=="admin") {%>value="1000000009"<% } %> >
             </div>
 
         </div>
@@ -26,7 +27,8 @@ if (evaluation) {
                 <button id="run" class="btn btn-primary btn-lg"><i class="icon-play"></i> <%= t("curso-python-interpreter-run") %></button>
             </div>
             <div class="col-sm-3"><%= t("curso-python-interpreter-title") %></div>
-            <div class="col-sm-8" id="user"><%= t("user") +": "+ current_user.Name %></div>
+            <div class="col-sm-6" id="user"><%= t("user") +": "+ current_user.Name %></div>
+            <div class="col-sm-2" id="elapsed"></div>
         </div>
         <div id="wrap" class="row">
         <textarea itemprop="description" rows="16" class="lined col-sm-12"  id="code" name="code"
@@ -47,6 +49,7 @@ $('#code').linedtextarea();
 runID = document.querySelector("#run");
 codeID = document.querySelector("#code");
 outputID = document.querySelector("#output");
+elapsedID = document.querySelector("#elapsed");
 codeID.setAttribute("wrap","off")
 outputID.setAttribute("wrap","off")
 $(`.linedwrap`).attr("class","linedtextarea")
@@ -65,7 +68,7 @@ function extractLineNo(stringy) {
 
 $("#interpreter").submit(function(e){
     $(`.codelines > div.lineselect`).attr("class", "lineno")
-
+    elapsedID.innerHTML = ""
     e.preventDefault();
     let form = $(this).serialize();
     $.ajax({
@@ -82,16 +85,17 @@ $("#interpreter").submit(function(e){
     });
 });
 function onResponse(data) {
-    var rtext = JSON.parse(data.responseText);
-    if (rtext.error !== "" && rtext.error !== undefined) {
+    var rjson = JSON.parse(data.responseText);
+    if (rjson.error !== "" && rjson.error !== undefined) {
         outputID.setAttribute("style", "color:red;");
-        rtext.output = rtext.output === "" ? rtext.error :  rtext.error + "\n\nOutput:\n" + rtext.output ;
-        num = extractLineNo(rtext.output);
+        rjson.output = rjson.output === "" ? rjson.error :  rjson.error + "\n\nOutput:\n" + rjson.output ;
+        num = extractLineNo(rjson.output);
         $(`.codelines > div:nth-of-type(${num})`).attr("class", "lineno lineselect")
     } else {
         outputID.setAttribute("style", "");
+        elapsedID.innerHTML = ( Math.ceil(parseInt(rjson.elapsed)/ 1e6) ).toString() + "ms"
     }
-    outputID.innerHTML = rtext.output.replace("File ", "Error on");
+    outputID.innerHTML = rjson.output.replace("File ", "Error on");
 }
 
 $(document).delegate('#code', 'keydown', function (e) {
@@ -100,13 +104,14 @@ $(document).delegate('#code', 'keydown', function (e) {
         e.preventDefault();
         var start = this.selectionStart;
         var end = this.selectionEnd;
+        var tab = `<%= tab %>`
         // set textarea value to: text before caret + tab + text after caret
         $(this).val($(this).val().substring(0, start)
-            + "\t"
+            + tab
             + $(this).val().substring(end));
         // put caret at right position again
         this.selectionStart =
-            this.selectionEnd = start + 1;
+            this.selectionEnd = start + tab.length;
     }
 });
 </script>

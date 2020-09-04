@@ -12,9 +12,11 @@ import (
 	"go.etcd.io/bbolt"
 	"io"
 	"io/ioutil"
+	"math/big"
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -48,8 +50,14 @@ func InterpretPost(c buffalo.Context) error {
 		_ = p.codeResult(c, "", "An unexpected error occurred. You were logged out")
 		return AuthDestroy(c)
 	}
+
 	if p.code.Evaluation.String() != nullUUID {
-		if i, err := strconv.ParseInt(p.code.Input, 10, 64); p.code.Input == "" || err != nil || i < 1000 {
+		var ID big.Int
+		ID.SetString(p.Input, 10)
+		c.Logger().Printf("ID: %s", ID.String())
+		var lim big.Int
+		lim.SetString("1000", 10)
+		if p.Input == "" || len(p.Input) > 60 || ID.Cmp(&lim) == -1 || !ID.ProbablyPrime(6) {
 			return p.codeResult(c, "", T.Translate(c, "curso-python-input-field-error"))
 		}
 		c.Logger().Info("starting evaluation!")
@@ -79,10 +87,10 @@ func InterpretPost(c buffalo.Context) error {
 		p.Input = eval.Inputs.String
 		err = p.runPy()
 		if err != nil {
-			return p.codeResult(c, "", err.Error())
+			return p.codeResult(c, p.Output, err.Error())
 		}
 		if p.Output == peval.Output {
-			return p.codeResult(c, T.Translate(c, "curso-python-evaluation-success"))
+			return p.codeResult(c, T.Translate(c, "curso-python-evaluation-success")+" ID:"+peval.Input)
 		} else {
 			return p.codeResult(c, "", T.Translate(c, "curso-python-evaluation-fail"))
 		}
@@ -137,8 +145,9 @@ type code struct {
 }
 
 type result struct {
-	Output string `json:"output"`
-	Error  string `json:"error"`
+	Output  string        `json:"output"`
+	Error   string        `json:"error"`
+	Elapsed time.Duration `json:"elapsed"`
 }
 
 type pythonHandler struct {
@@ -195,7 +204,9 @@ func (p *pythonHandler) runPy() (err error) {
 		time.Sleep(pyTimeout_ms * time.Millisecond)
 		status <- pyTimeout
 	}()
+	var tstart time.Time
 	go func() {
+		tstart = time.Now()
 		output, err = cmd.CombinedOutput()
 		if err != nil {
 			status <- pyError
@@ -211,6 +222,7 @@ func (p *pythonHandler) runPy() (err error) {
 				cmd.Process.Kill()
 				return fmt.Errorf("process timed out (%dms)", pyTimeout_ms)
 			case pyError, pyOK:
+				p.Elapsed = time.Now().Sub(tstart)
 				p.Output = strings.ReplaceAll(string(output), "\""+filename+"\",", "")
 				return
 			default:
@@ -324,41 +336,41 @@ func zipAssetFolder(path string) func(c buffalo.Context) error {
 			c.Response().Write([]byte(err.Error()))
 			return c.Redirect(500, "/")
 		}
-		w:= c.Response()
+		w := c.Response()
 		defer fo.Close()
 		z := zip.NewWriter(fo)
 		defer z.Close()
-		fullpath := "assets/" + strings.Trim( path, "/\\") + "/"
+		fullpath := "assets/" + strings.Trim(path, "/\\") + "/"
 		finfos, err := ioutil.ReadDir(fullpath)
-		for _,f:= range finfos {
+		for _, f := range finfos {
 			if f.IsDir() {
 				continue
 			}
 			if err = addFileToZip(z, fullpath+f.Name()); err != nil {
 				c.Response().Write([]byte(err.Error()))
-				return c.Redirect(500,"/")
+				return c.Redirect(500, "/")
 			}
 		}
 		z.Flush()
-		if err:=z.Close();err!=nil {
+		if err := z.Close(); err != nil {
 			c.Response().Write([]byte(err.Error()))
-			return c.Redirect(500,"/")
+			return c.Redirect(500, "/")
 		}
 
-		info,_:=fo.Stat()
+		info, _ := fo.Stat()
 		fo.Close()
 		//name := info.Name()
 
 		// Add files to zip
-		zipfile,err := os.Open("tmp/"+jobname)
+		zipfile, err := os.Open("tmp/" + jobname)
 		if err != nil {
 			c.Response().Write([]byte(err.Error()))
-			return c.Redirect(500,"/")
+			return c.Redirect(500, "/")
 		}
-
+		name := strings.Split(path, string(filepath.Separator))
 		w.Header().Set("Content-Type", "application/octet-stream")
-		w.Header().Set("Content-Disposition", `attachment; filename="` + path + `.zip"`)
-		w.Header().Set("Content-Length", fmt.Sprintf("%d",info.Size()))
+		w.Header().Set("Content-Disposition", `attachment; filename="`+name[len(name)-1]+`.zip"`)
+		w.Header().Set("Content-Length", fmt.Sprintf("%d", info.Size()))
 		if _, err := io.Copy(w, zipfile); err != nil {
 			return c.Redirect(500, "/")
 		}

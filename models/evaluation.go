@@ -2,25 +2,27 @@ package models
 
 import (
 	"encoding/json"
+	"time"
+
 	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/gobuffalo/validate/v3"
-	"github.com/gofrs/uuid"
-	"time"
 	"github.com/gobuffalo/validate/v3/validators"
+	"github.com/gofrs/uuid"
 )
+
 // Evaluation is used by pop to map your evaluations database table to your go code.
 type Evaluation struct {
-    ID uuid.UUID `json:"id" db:"id"`
-    Title string `json:"title" db:"title" form:"title"`
-    Description string `json:"description" db:"description" form:"description"`
-    Content string `json:"content" db:"content" form:"content"`
-    Solution string `json:"solution" db:"solution" form:"solution"`
-    Hidden bool `json:"hidden" db:"hidden" form:"hidden"`
-    Deleted bool `json:"deleted" db:"deleted" form:"deleted"`
-    Inputs nulls.String `json:"inputs" db:"inputs" form:"stdin"`
-    CreatedAt time.Time `json:"created_at" db:"created_at"`
-    UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+	ID          uuid.UUID    `json:"id" db:"id"`
+	Title       string       `json:"title" db:"title" form:"title"`
+	Description string       `json:"description" db:"description" form:"description"`
+	Content     string       `json:"content" db:"content" form:"content"`
+	Solution    string       `json:"solution" db:"solution" form:"solution"`
+	Hidden      bool         `json:"hidden" db:"hidden" form:"hidden"`
+	Deleted     bool         `json:"deleted" db:"deleted" form:"deleted"`
+	Inputs      nulls.String `json:"inputs" db:"inputs" form:"stdin"`
+	CreatedAt   time.Time    `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time    `json:"updated_at" db:"updated_at"`
 }
 
 // String is not required by pop and may be deleted

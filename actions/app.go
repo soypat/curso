@@ -1,18 +1,18 @@
 package actions
 
 import (
-	"github.com/gobuffalo/envy"
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/envy"
 	forcessl "github.com/gobuffalo/mw-forcessl"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
 	"github.com/markbates/goth/gothic"
 	"github.com/unrolled/secure"
 
-	"github.com/soypat/curso/models"
 	"github.com/gobuffalo/buffalo-pop/v2/pop/popmw"
 	csrf "github.com/gobuffalo/mw-csrf"
 	i18n "github.com/gobuffalo/mw-i18n"
 	"github.com/gobuffalo/packr/v2"
+	"github.com/soypat/curso/models"
 )
 
 // ENV is used to help switch settings based on where the
@@ -66,18 +66,18 @@ func App() *buffalo.App {
 		app.Use(SetCurrentUser)
 
 		app.Use(SiteStruct)
-		app.GET("/auth",AuthHome)
+		app.GET("/auth", AuthHome)
 		bah := buffalo.WrapHandlerFunc(gothic.BeginAuthHandler) // Begin authorization handler = bah
 		auth := app.Group("/auth")
 		//auth.GET("/",AuthHome)
 		auth.GET("/{provider}/callback", AuthCallback)
 		auth.GET("/{provider}", bah)
-		auth.Middleware.Skip(Authorize, bah, AuthCallback) // don't ask for authorization on authorization page
-		auth.Middleware.Skip(SetCurrentUser,bah, AuthCallback) // set current user needs to seek user in db. if no users present in db setcurrentuser fails
+		auth.Middleware.Skip(Authorize, bah, AuthCallback)      // don't ask for authorization on authorization page
+		auth.Middleware.Skip(SetCurrentUser, bah, AuthCallback) // set current user needs to seek user in db. if no users present in db setcurrentuser fails
 		auth.DELETE("/logout", AuthDestroy).Name("logout")
 
-		app.GET("/u",UserSettingsGet).Name("userSettings")
-		app.POST("/u",UserSettingsPost)
+		app.GET("/u", UserSettingsGet).Name("userSettings")
+		app.POST("/u", UserSettingsPost)
 
 		// home page setup
 		app.GET("/", manageForum) //TODO change homepage
@@ -85,52 +85,49 @@ func App() *buffalo.App {
 
 		curso := app.Group("/curso-python")
 		curso.Use(SafeList)
-		curso.GET("/eval",EvaluationIndex).Name("evaluation")
-		curso.GET("/eval/create",CursoEvaluationCreateGet).Name("evaluationCreate")
-		curso.POST("/eval/create",CursoEvaluationCreatePost)
-		curso.GET("/eval/e/{evalid}",CursoEvaluationGet).Name("evaluationGet")
-		curso.GET("/eval/e/{evalid}/edit",CursoEvaluationEditGet).Name("evaluationEditGet")
-		curso.POST("/eval/e/{evalid}/edit",CursoEvaluationEditPost)
-		curso.GET("/eval/e/{evalid}/delete",CursoEvaluationDelete).Name("evaluationDelete")
-
+		curso.GET("/eval", EvaluationIndex).Name("evaluation")
+		curso.GET("/eval/create", CursoEvaluationCreateGet).Name("evaluationCreate")
+		curso.POST("/eval/create", CursoEvaluationCreatePost)
+		curso.GET("/eval/e/{evalid}", CursoEvaluationGet).Name("evaluationGet")
+		curso.GET("/eval/e/{evalid}/edit", CursoEvaluationEditGet).Name("evaluationEditGet")
+		curso.POST("/eval/e/{evalid}/edit", CursoEvaluationEditPost)
+		curso.GET("/eval/e/{evalid}/delete", CursoEvaluationDelete).Name("evaluationDelete")
 
 		interpreter := app.Group("/py")
-		interpreter.POST("/",InterpretPost).Name("Interpret")
+		interpreter.POST("/", InterpretPost).Name("Interpret")
 
 		forum := app.Group("/f/{forum_title}")
-		forum.GET("/c",NotFound)
+		forum.GET("/c", NotFound)
 		forum.Use(SetCurrentForum)
 		forum.GET("/", forumIndex).Name("forum")
-		forum.GET("/create",CategoriesCreateGet).Name("catCreate")
-		forum.POST("/create",CategoriesCreatePost)
+		forum.GET("/create", CategoriesCreateGet).Name("catCreate")
+		forum.POST("/create", CategoriesCreatePost)
 
 		catGroup := forum.Group("/c/{cat_title}")
 		catGroup.Use(SetCurrentCategory)
 		catGroup.GET("/", CategoriesIndex).Name("cat")
-		catGroup.GET("/createTopic",TopicCreateGet).Name("topicCreate")
-		catGroup.POST("/createTopic",TopicCreatePost)
-
+		catGroup.GET("/createTopic", TopicCreateGet).Name("topicCreate")
+		catGroup.POST("/createTopic", TopicCreatePost)
 
 		topicGroup := catGroup.Group("/{tid}")
 		topicGroup.Use(SafeList)
 		topicGroup.Use(SetCurrentTopic)
-		topicGroup.GET("/",TopicGet).Name("topicGet") //
+		topicGroup.GET("/", TopicGet).Name("topicGet") //
 		topicGroup.GET("/edit", TopicEditGet).Name("topicEdit")
 		topicGroup.POST("/edit", TopicEditPost)
 		topicGroup.GET("/reply", ReplyGet).Name("reply")
-		topicGroup.POST("/reply",ReplyPost)
+		topicGroup.POST("/reply", ReplyPost)
 
 		replyGroup := topicGroup.Group("/{rid}")
 		replyGroup.Use(SetCurrentReply)
 		replyGroup.GET("/edit", editReplyGet).Name("replyEdit")
-		replyGroup.POST("/edit",editReplyPost)
-		replyGroup.DELETE("/edit",DeleteReply)
-
+		replyGroup.POST("/edit", editReplyPost)
+		replyGroup.DELETE("/edit", DeleteReply)
 
 		admin := app.Group("/admin")
 		admin.Use(SiteStruct)
 		admin.GET("/f", manageForum)
-		admin.GET("newforum",createForum)
+		admin.GET("newforum", createForum)
 		admin.POST("newforum/post", createForumPost)
 
 		admin.GET("users", UsersViewAllGet).Name("allUsers")

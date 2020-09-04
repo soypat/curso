@@ -15,4 +15,3 @@ func (as *ActionSuite) Test_Categories_CreatePost() {
 func (as *ActionSuite) Test_Categories_Detail() {
 	as.Fail("Not Implemented!")
 }
-

@@ -3,14 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/etcd-io/bbolt"
-	"github.com/gofrs/uuid"
 	"html/template"
 	"io/ioutil"
 	"os"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/etcd-io/bbolt"
+	"github.com/gofrs/uuid"
 )
 
 func main() {
@@ -35,7 +36,7 @@ func main() {
 		return
 	}
 	fj, _ := os.Create("out.json")
-	j, _ := json.MarshalIndent(codes," ","\t")
+	j, _ := json.MarshalIndent(codes, " ", "\t")
 	fj.Write(j)
 	fj.Close()
 	f, err := os.Open("tpl.html")
@@ -60,6 +61,7 @@ func main() {
 }
 
 var tform = "2006-01-02 15:04:05.999999999 -0700 MST"
+
 //var dateString = "2018-10-15 15:42:37.5989253 +1100 AEDT m=+3610.688917401" // as is recieved by go
 // sort interface
 type ByTime []pythonHandler
@@ -78,8 +80,8 @@ type pythonHandler struct {
 	filename string
 }
 type code struct {
-	Source string `json:"code" form:"code"`
-	Input string `json:"input" form:"input"`
+	Source     string    `json:"code" form:"code"`
+	Input      string    `json:"input" form:"input"`
 	Evaluation uuid.UUID `json:"evalid" form:"evalid"`
 }
 

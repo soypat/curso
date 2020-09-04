@@ -5,11 +5,6 @@ import (
 	"crypto"
 	"encoding/json"
 	"fmt"
-	"github.com/gobuffalo/buffalo"
-	"github.com/gobuffalo/pop/v5"
-	"github.com/gofrs/uuid"
-	"github.com/soypat/curso/models"
-	"go.etcd.io/bbolt"
 	"io"
 	"io/ioutil"
 	"math/big"
@@ -21,6 +16,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/pop/v5"
+	"github.com/gofrs/uuid"
+	"github.com/soypat/curso/models"
+	"go.etcd.io/bbolt"
 )
 
 const nullUUID = "00000000-0000-0000-0000-000000000000"
@@ -60,6 +61,7 @@ func InterpretPost(c buffalo.Context) error {
 		if p.Input == "" || len(p.Input) > 60 || ID.Cmp(&lim) == -1 || !ID.ProbablyPrime(6) {
 			return p.codeResult(c, "", T.Translate(c, "curso-python-input-field-error"))
 		}
+
 		c.Logger().Info("starting evaluation!")
 		tx := c.Value("tx").(*pop.Connection)
 		q := tx.Where("id = ?", p.code.Evaluation)

@@ -2,6 +2,8 @@ package actions
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/gofrs/uuid"
@@ -10,7 +12,6 @@ import (
 	"github.com/markbates/goth/providers/google"
 	"github.com/pkg/errors"
 	"github.com/soypat/curso/models"
-	"os"
 )
 
 const cookieUidName = "current_user_id"
@@ -19,7 +20,7 @@ func init() {
 	gothic.Store = App().SessionStore
 	goth.UseProviders(
 		google.New(os.Getenv("GGL_KEY_FORUM"), os.Getenv("GGL_SECRET_FORUM"), fmt.Sprintf("%s%s", App().Host, "/auth/google/callback"),
-		//google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"), fmt.Sprintf("%s%s", App().Host, "/auth/google/callback"),
+			//google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"), fmt.Sprintf("%s%s", App().Host, "/auth/google/callback"),
 			"profile", "email"),
 	)
 }
@@ -33,8 +34,8 @@ func AuthCallback(c buffalo.Context) error {
 	c.Logger().Debug("AuthCallback called")
 	gu, err := gothic.CompleteUserAuth(c.Response(), c.Request())
 	if err != nil {
-		c.Flash().Add("danger",T.Translate(c,"app-auth-error"))
-		return c.Redirect(302,"/")//c.Error(401, err)
+		c.Flash().Add("danger", T.Translate(c, "app-auth-error"))
+		return c.Redirect(302, "/") //c.Error(401, err)
 	}
 	tx := c.Value("tx").(*pop.Connection)
 	q := tx.Where("provider = ? and provider_id = ?", gu.Provider, gu.UserID)
@@ -121,9 +122,9 @@ func Authorize(next buffalo.Handler) buffalo.Handler {
 func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		c.Logger().Debug("SetCurrentUser called")
-		c.Logger().Printf("%s",c.Session().Session)
+		c.Logger().Printf("%s", c.Session().Session)
 		if uid := c.Session().Get(cookieUidName); uid != nil {
-			c.Logger().Debug("user id found in SetCurrentUser" )
+			c.Logger().Debug("user id found in SetCurrentUser")
 			u := &models.User{}
 			tx := c.Value("tx").(*pop.Connection)
 			err := tx.Find(u, uid)
@@ -132,9 +133,9 @@ func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 				return next(c)
 			}
 			if u.Role == "banned" {
-				return c.Redirect(302,"https://ieeeitba.web.app/cursospython")
+				return c.Redirect(302, "https://ieeeitba.web.app/cursospython")
 			}
-			u.Theme = fmt.Sprintf("%s",c.Session().Get("code_theme"))
+			u.Theme = fmt.Sprintf("%s", c.Session().Get("code_theme"))
 			c.Set("current_user", u)
 		}
 		c.Logger().Debug("SetCurrentUser finished succesfully")

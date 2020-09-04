@@ -2,12 +2,13 @@ package models
 
 import (
 	"encoding/json"
-	"github.com/gobuffalo/pop/v5/slices"
-	"github.com/gobuffalo/pop/v5"
-	"github.com/gobuffalo/validate/v3"
-	"github.com/gofrs/uuid"
 	"time"
+
+	"github.com/gobuffalo/pop/v5"
+	"github.com/gobuffalo/pop/v5/slices"
+	"github.com/gobuffalo/validate/v3"
 	"github.com/gobuffalo/validate/v3/validators"
+	"github.com/gofrs/uuid"
 )
 
 // Topic is used by pop to map your topics database table to your go code.
@@ -103,14 +104,13 @@ func (t *Topic) RemoveSubscriber(id uuid.UUID) {
 	t.Subscribers = subs
 }
 
-
 // Topics is not required by pop and may be deleted
 
 type Topics []Topic
+
 func (t Topics) Len() int           { return len(t) }
 func (t Topics) Swap(i, j int)      { t[i], t[j] = t[j], t[i] }
 func (t Topics) Less(i, j int) bool { return t[i].CreatedAt.After(t[j].CreatedAt) }
-
 
 // String is not required by pop and may be deleted
 func (t Topics) String() string {

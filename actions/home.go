@@ -1,8 +1,9 @@
 package actions
 
 import (
-	"github.com/gobuffalo/buffalo"
 	"net/http"
+
+	"github.com/gobuffalo/buffalo"
 )
 
 // HomeHandler is a default handler to serve up

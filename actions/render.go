@@ -2,15 +2,16 @@ package actions
 
 import (
 	"fmt"
-	"github.com/gobuffalo/packr/v2"
-	"github.com/gobuffalo/buffalo/render"
-	"github.com/gobuffalo/plush"
-	"github.com/soypat/curso/models"
 	"html/template"
 	"math"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/gobuffalo/buffalo/render"
+	"github.com/gobuffalo/packr/v2"
+	"github.com/gobuffalo/plush"
+	"github.com/soypat/curso/models"
 )
 
 var r *render.Engine

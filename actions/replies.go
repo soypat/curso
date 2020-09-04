@@ -49,12 +49,12 @@ func ReplyPost(c buffalo.Context) error {
 	//	return errors.WithStack(err)
 	//}
 	f := c.Value("forum").(*models.Forum)
-	return c.Redirect(302, "topicGetPath()", render.Data{"forum_title":f.Title, "cat_title":c.Param("cat_title"),
-		"tid":topic.ID})
+	return c.Redirect(302, "topicGetPath()", render.Data{"forum_title": f.Title, "cat_title": c.Param("cat_title"),
+		"tid": topic.ID})
 }
 
 func editReplyGet(c buffalo.Context) error {
-	return c.Render(200,r.HTML("replies/create.plush.html"))
+	return c.Render(200, r.HTML("replies/create.plush.html"))
 }
 func editReplyPost(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
@@ -69,22 +69,22 @@ func editReplyPost(c buffalo.Context) error {
 	if err := tx.Update(reply); err != nil {
 		return errors.WithStack(err)
 	}
-	c.Flash().Add("success", T.Translate(c,"reply-edit-success"))
+	c.Flash().Add("success", T.Translate(c, "reply-edit-success"))
 	f := c.Value("forum").(*models.Forum)
-	return c.Redirect(302, "topicGetPath()", render.Data{"forum_title":f.Title, "cat_title":c.Param("cat_title"),
-		"tid":c.Param("tid")})
+	return c.Redirect(302, "topicGetPath()", render.Data{"forum_title": f.Title, "cat_title": c.Param("cat_title"),
+		"tid": c.Param("tid")})
 }
 
 func SetCurrentReply(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		//reply := &models.Reply{}
-		reply, err := loadReply(c,c.Param("rid"))
+		reply, err := loadReply(c, c.Param("rid"))
 		if err != nil {
-			c.Flash().Add("danger",T.Translate(c,"topic-not-found"))
-			return c.Render(404,r.HTML("meta/404.plush.html"))
+			c.Flash().Add("danger", T.Translate(c, "topic-not-found"))
+			return c.Render(404, r.HTML("meta/404.plush.html"))
 		}
-		c.Logger().Infof("Reply got %s",reply)
-		c.Set("reply",reply)
+		c.Logger().Infof("Reply got %s", reply)
+		c.Set("reply", reply)
 		return next(c)
 	}
 }
@@ -96,10 +96,10 @@ func DeleteReply(c buffalo.Context) error {
 	}
 	f := c.Value("forum").(*models.Forum)
 	usr := c.Value("current_user").(*models.User)
-	if !(usr.Role != "admin" ) && usr.ID != reply.AuthorID {
+	if !(usr.Role != "admin") && usr.ID != reply.AuthorID {
 		c.Flash().Add("danger", "You are not authorized to delete this reply")
-		return c.Redirect(302, "topicGetPath()", render.Data{"forum_title":f.Title, "cat_title":c.Param("cat_title"),
-			"tid":c.Param("tid")})
+		return c.Redirect(302, "topicGetPath()", render.Data{"forum_title": f.Title, "cat_title": c.Param("cat_title"),
+			"tid": c.Param("tid")})
 	}
 	tx := c.Value("tx").(*pop.Connection)
 	reply.Deleted = true
@@ -107,8 +107,8 @@ func DeleteReply(c buffalo.Context) error {
 		return errors.WithStack(err)
 	}
 	c.Flash().Add("success", "Reply deleted successfuly.")
-	return c.Redirect(302, "topicGetPath()", render.Data{"forum_title":f.Title, "cat_title":c.Param("cat_title"),
-		"tid":c.Param("tid")})
+	return c.Redirect(302, "topicGetPath()", render.Data{"forum_title": f.Title, "cat_title": c.Param("cat_title"),
+		"tid": c.Param("tid")})
 
 }
 

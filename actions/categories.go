@@ -2,26 +2,27 @@ package actions
 
 import (
 	"fmt"
+	"net/http"
+	"sort"
+
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/render"
 	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/pkg/errors"
 	"github.com/soypat/curso/models"
-	"net/http"
-	"sort"
 )
 
 // CategoriesIndex default implementation.
 func CategoriesIndex(c buffalo.Context) error {
 	catTitle := c.Param("cat_title")
-	c.Logger().Printf("accessed %s",catTitle)
+	c.Logger().Printf("accessed %s", catTitle)
 	tx := c.Value("tx").(*pop.Connection)
 	cat := &models.Category{}
 
-	err:=tx.Where("title = ?",catTitle).First(cat)
-	if  err != nil {
-		c.Logger().Warnf("'where title = %s' FAILED!",catTitle)
+	err := tx.Where("title = ?", catTitle).First(cat)
+	if err != nil {
+		c.Logger().Warnf("'where title = %s' FAILED!", catTitle)
 		return c.Error(404, err)
 	}
 	c.Set("category", cat)
@@ -34,14 +35,14 @@ func CategoriesIndex(c buffalo.Context) error {
 	for i, t := range *topics {
 		topic, err := loadTopic(c, t.ID.String())
 		if err != nil {
-			c.Logger().Errorf("'loadTopic(c, %s)' FAILED!",t.ID.String())
+			c.Logger().Errorf("'loadTopic(c, %s)' FAILED!", t.ID.String())
 			return errors.WithStack(err)
 		}
 		(*topics)[i] = *topic
 	}
 	sort.Sort(topics)
 	c.Set("topics", topics)
-	c.Set("pagination",q.Paginator )
+	c.Set("pagination", q.Paginator)
 	return c.Render(200, r.HTML("categories/index.plush.html"))
 	//return c.Render(http.StatusOK, r.HTML("categories/index.plush.html"))
 }
@@ -62,7 +63,7 @@ func CategoriesCreatePost(c buffalo.Context) error {
 	c.Logger().Printf("T %s %s", cat.Title, cat.Description)
 	if !validURLDir(cat.Title) {
 
-		c.Flash().Add("danger", T.Translate(c,"category-invalid-title"))
+		c.Flash().Add("danger", T.Translate(c, "category-invalid-title"))
 		return c.Redirect(302, "")
 	}
 	f := c.Value("forum").(*models.Forum)
@@ -86,7 +87,7 @@ func CategoriesCreatePost(c buffalo.Context) error {
 		return errors.WithStack(err)
 	}
 	c.Flash().Add("success", fmt.Sprintf("Category %s created", cat.Title))
-	return c.Redirect(302, "forumPath()",render.Data{"forum_title":f.Title})
+	return c.Redirect(302, "forumPath()", render.Data{"forum_title": f.Title})
 }
 
 // CategoriesDetail default implementation.
@@ -101,15 +102,15 @@ func SetCurrentCategory(next buffalo.Handler) buffalo.Handler {
 		cat := &models.Category{}
 		title := c.Param("cat_title")
 		if title == "" {
-			return c.Redirect(302,"forumPath()")
+			return c.Redirect(302, "forumPath()")
 		}
-		q  := tx.Where("title = ?", title)
+		q := tx.Where("title = ?", title)
 		err := q.First(cat)
 		if err != nil {
-			c.Flash().Add("danger","Error while seeking category")
-			return c.Redirect(302,"forumPath()")
+			c.Flash().Add("danger", "Error while seeking category")
+			return c.Redirect(302, "forumPath()")
 		}
-		c.Set("inCat",true)
+		c.Set("inCat", true)
 		c.Set("category", cat)
 		return next(c)
 	}

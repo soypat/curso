@@ -102,6 +102,8 @@ github.com/gobuffalo/buffalo v0.15.5/go.mod h1:MeAI3aC7vGegr6Ruh+nfj0TvIoBhlLeO7
 github.com/gobuffalo/buffalo-docker v1.0.5/go.mod h1:NZ3+21WIdqOUlOlM2onCt7cwojYp4Qwlsngoolw8zlE=
 github.com/gobuffalo/buffalo-docker v1.0.6/go.mod h1:UlqKHJD8CQvyIb+pFq+m/JQW2w2mXuhxsaKaTj1X1XI=
 github.com/gobuffalo/buffalo-docker v1.0.7/go.mod h1:BdB8AhcmjwR6Lo3rDPMzyh/+eNjYnZ1TAO0eZeLkhig=
+github.com/gobuffalo/buffalo-heroku v1.0.9 h1:VT7l+OZp0Rq5ASQ7lIOWoWeJY8hBWv9JIKiSGqP+3/8=
+github.com/gobuffalo/buffalo-heroku v1.0.9/go.mod h1:W6h4f6JEENPG/+I4BtsweVSrRb48TRRUA9QLIGQYcv0=
 github.com/gobuffalo/buffalo-plugins v1.0.2/go.mod h1:pOp/uF7X3IShFHyobahTkTLZaeUXwb0GrUTb9ngJWTs=
 github.com/gobuffalo/buffalo-plugins v1.0.4/go.mod h1:pWS1vjtQ6uD17MVFWf7i3zfThrEKWlI5+PYLw/NaDB4=
 github.com/gobuffalo/buffalo-plugins v1.4.3/go.mod h1:uCzTY0woez4nDMdQjkcOYKanngeUVRO2HZi7ezmAjWY=
@@ -149,6 +151,8 @@ github.com/gobuffalo/buffalo-pop v1.23.1 h1:AnxJQZu/ZN7HCm3L8YBJoNWc2UiwSe6UHv5S
 github.com/gobuffalo/buffalo-pop v1.23.1/go.mod h1:Sb+fy/hLtxfhOrtLAJiL7JsKqazydmAVqp5rcHio/yg=
 github.com/gobuffalo/buffalo-pop/v2 v2.1.0 h1:t1hDnSgPjxmfH3Uml8wkL0lho1pXNSusNO9Ri02R2S8=
 github.com/gobuffalo/buffalo-pop/v2 v2.1.0/go.mod h1:MAlrqVy2wVsDiSeoFrfKXT3ZFJLNj0bhnN1v/7a5/78=
+github.com/gobuffalo/buffalo-pop/v2 v2.2.0 h1:IB/swjW7fPYO5i6jHNR1OBMICy5nhkrtKBEdPH7WISk=
+github.com/gobuffalo/buffalo-pop/v2 v2.2.0/go.mod h1:RAR+gXt+0FkcHbymVDrWnAn2lRjgAEW+Mg7F75ZRHgk=
 github.com/gobuffalo/clara v0.4.1/go.mod h1:3QgAPqYgPqAzhfGbNLlp4UztaZRi2SOg+ZrZwaq9L94=
 github.com/gobuffalo/clara v0.6.0/go.mod h1:RKZxkcH80pLykRi2hLkoxGMxA8T06Dc9fN/pFvutMFY=
 github.com/gobuffalo/clara v0.7.0/go.mod h1:pen7ZMmnuYUYVF/3BbnvidYVAbMEfkyO4O+Tc+FKICU=
@@ -288,6 +292,7 @@ github.com/gobuffalo/gogen v0.0.0-20190224213239-1c6076128bbc/go.mod h1:tQqPADZK
 github.com/gobuffalo/gogen v0.0.0-20190315121717-8f38393713f5/go.mod h1:V9QVDIxsgKNZs6L2IYiGR8datgMhB577vzTDqypH360=
 github.com/gobuffalo/gogen v0.1.0/go.mod h1:8NTelM5qd8RZ15VjQTFkAW6qOMx5wBbW4dSCS3BY8gg=
 github.com/gobuffalo/gogen v0.1.1/go.mod h1:y8iBtmHmGc4qa3urIyo1shvOD8JftTtfcKi+71xfDNE=
+github.com/gobuffalo/gogen v0.2.0 h1:Xx7NCe+/y++eII2aWAFZ09/81MhDCsZwvMzIFJoQRnU=
 github.com/gobuffalo/gogen v0.2.0/go.mod h1:V9QVDIxsgKNZs6L2IYiGR8datgMhB577vzTDqypH360=
 github.com/gobuffalo/helpers v0.0.0-20190422082217-384f90c6579f/go.mod h1:g0I3qKQEyJxwnHtEmLugD75eoOiWxEtibcV62tYah9w=
 github.com/gobuffalo/helpers v0.0.0-20190506214229-8e6f634af7c3/go.mod h1:HlNpmw2+Rjx882VUf6hJfNJs5wpNRzX02KcqCXDlLGc=
@@ -475,6 +480,7 @@ github.com/gobuffalo/plushgen v0.0.0-20190104222512-177cd2b872b3/go.mod h1:tYxCo
 github.com/gobuffalo/plushgen v0.0.0-20190224160205-347ea233336e/go.mod h1:tYxCozi8X62bpZyKXYHw1ncx2ZtT2nFvG42kuLwYjoc=
 github.com/gobuffalo/plushgen v0.0.0-20190329152458-0555238fe0d9/go.mod h1:3U71v6HWZpVER1nInTXeAwdoRNsRd4W8aeIa1Lyp+Bk=
 github.com/gobuffalo/plushgen v0.1.0/go.mod h1:NK33QLkRK/xKexiPFSxlWRT286F4yStZUa/Fbx0guvo=
+github.com/gobuffalo/plushgen v0.1.2 h1:s4yAgNdfNMyMQ7o+Is4f1VlH2L1tKosT+m7BF28C8H4=
 github.com/gobuffalo/plushgen v0.1.2/go.mod h1:3U71v6HWZpVER1nInTXeAwdoRNsRd4W8aeIa1Lyp+Bk=
 github.com/gobuffalo/pop v4.8.2+incompatible/go.mod h1:DwBz3SD5SsHpTZiTubcsFWcVDpJWGsxjVjMPnkiThWg=
 github.com/gobuffalo/pop v4.8.3+incompatible/go.mod h1:DwBz3SD5SsHpTZiTubcsFWcVDpJWGsxjVjMPnkiThWg=
@@ -502,6 +508,8 @@ github.com/gobuffalo/pop v4.13.1+incompatible h1:AhbqPxNOBN/DBb2DBaiBqzOXIBQXxEY
 github.com/gobuffalo/pop v4.13.1+incompatible/go.mod h1:DwBz3SD5SsHpTZiTubcsFWcVDpJWGsxjVjMPnkiThWg=
 github.com/gobuffalo/pop/v5 v5.2.3 h1:4NMwNddmcx7ip2eoJO5gnX6CbjO6M/ZyGopp6hwekhc=
 github.com/gobuffalo/pop/v5 v5.2.3/go.mod h1:Hj586Cr7FoTFNmvzyNdUcajv3r0A+W+bkil4RIX/zKo=
+github.com/gobuffalo/pop/v5 v5.2.4 h1:mvAjx8k1oYXWBTNFbvlxFBNEfoXTnEnVBcCmvQ48Lnw=
+github.com/gobuffalo/pop/v5 v5.2.4/go.mod h1:4mYDlrcXTnG2n9rG8p+c10X1QnfMc4YIRVmiC8ihMAI=
 github.com/gobuffalo/release v1.0.35/go.mod h1:VtHFAKs61vO3wboCec5xr9JPTjYyWYcvaM3lclkc4x4=
 github.com/gobuffalo/release v1.0.38/go.mod h1:VtHFAKs61vO3wboCec5xr9JPTjYyWYcvaM3lclkc4x4=
 github.com/gobuffalo/release v1.0.42/go.mod h1:RPs7EtafH4oylgetOJpGP0yCZZUiO4vqHfTHJjSdpug=
@@ -731,6 +739,7 @@ github.com/markbates/hmax v1.1.0/go.mod h1:hhn8pJiRwNTEmNlxhfiTbL+CtEYiAX3wuhSf/
 github.com/markbates/inflect v1.0.0/go.mod h1:oTeZL2KHA7CUX6X+fovmK9OvIOFuqu0TwdQrZjLTh88=
 github.com/markbates/inflect v1.0.1/go.mod h1:uv3UVNBe5qBIfCm8O8Q+DW+S1EopeyINj+Ikhc7rnCk=
 github.com/markbates/inflect v1.0.3/go.mod h1:1fR9+pO2KHEO9ZRtto13gDwwZaAKstQzferVeWqbgNs=
+github.com/markbates/inflect v1.0.4 h1:5fh1gzTFhfae06u3hzHYO9xe3l3v3nW5Pwt3naLTP5g=
 github.com/markbates/inflect v1.0.4/go.mod h1:1fR9+pO2KHEO9ZRtto13gDwwZaAKstQzferVeWqbgNs=
 github.com/markbates/oncer v0.0.0-20180924031910-e862a676800b/go.mod h1:Ld9puTsIW75CHf65OeIOkyKbteujpZVXDpWK6YGZbxE=
 github.com/markbates/oncer v0.0.0-20180924034138-723ad0170a46/go.mod h1:Ld9puTsIW75CHf65OeIOkyKbteujpZVXDpWK6YGZbxE=

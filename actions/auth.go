@@ -65,7 +65,7 @@ func AuthCallback(c buffalo.Context) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	c.Flash().Add("success", "You have been logged in")
+	c.Flash().Add("success", T.Translate(c,"app-login"))
 	// Do something with the user, maybe register them/sign them in
 	c.Logger().Debug("AuthCallback finished successfully")
 	return c.Redirect(302, "/") // redirect to homepage
@@ -79,7 +79,7 @@ func AuthDestroy(c buffalo.Context) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	c.Flash().Add("success", "You have been logged out")
+	c.Flash().Add("success", T.Translate(c,"app-logout"))
 	return c.Redirect(302, "/")
 }
 
@@ -91,7 +91,7 @@ func Authorize(next buffalo.Handler) buffalo.Handler {
 		c.Logger().Debug("Authorize called")
 		unverifiedUid := c.Session().Get(cookieUidName)
 		if unverifiedUid == nil {
-			c.Flash().Add("danger", "You must be logged in to see this page")
+			c.Flash().Add("danger", T.Translate(c,"app-user-required"))
 			return c.Redirect(302, "/")
 		}
 		uid := unverifiedUid.(uuid.UUID)
@@ -103,7 +103,7 @@ func Authorize(next buffalo.Handler) buffalo.Handler {
 			return c.Redirect(500, "/")
 		}
 		if !exists {
-			c.Flash().Add("danger", "Authentication error. Please try logging in again")
+			c.Flash().Add("danger", T.Translate(c,"app-user-auth-error"))
 			return AuthDestroy(c)
 		}
 		u := &models.User{}

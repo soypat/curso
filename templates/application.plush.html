@@ -126,14 +126,14 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item nav-link" href="<%= logoutPath() %>"
                                data-method="DELETE"><i class="icon-signout"></i> <%=
-                                t("app-logout") %></a>
+                                t("app-request-logout") %></a>
                         </div>
                     </div>
                 </li>
 
                 <% } else { %>
                 <li class="nav-item">
-                    <a href="<%= auth_path %>" class="nav-link"><%= t("app-login") %></a>
+                    <a href="<%= auth_path %>" class="nav-link"><%= t("app-request-login") %></a>
                 </li>
                 <% } %>
             </ul>

@@ -32,7 +32,7 @@ let tab = t("interpreter-tab")
         </div>
         <div id="wrap" class="row">
         <textarea itemprop="description" rows="16" class="lined col-sm-12"  id="code" name="code"
-              autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false"><%= t("curso-python-interpreter-placeholder") %></textarea>
+              autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false"><%= if (!(evaluation)) {%><%= t("curso-python-interpreter-placeholder") %><% }%></textarea>
         </div>
         <style>
 

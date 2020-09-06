@@ -27,14 +27,14 @@ import (
 const nullUUID = "00000000-0000-0000-0000-000000000000"
 
 var DB *bbolt.DB
+var DBeval *bbolt.DB
 
 func init() {
 	var err error
 	DB, err = bbolt.Open("tmp/codes.db", 0600, &bbolt.Options{Timeout: time.Second})
-	if err != nil {
-		defer panic(err)
-		os.Exit(1)
-	}
+	must(err)
+	DBeval, err = bbolt.Open("tmp/codeseval.db", 0600, &bbolt.Options{Timeout: time.Second})
+	must(err)
 }
 
 // recieve POST request to submit and evaluate code
@@ -51,51 +51,8 @@ func InterpretPost(c buffalo.Context) error {
 		_ = p.codeResult(c, "", "An unexpected error occurred. You were logged out")
 		return AuthDestroy(c)
 	}
-
 	if p.code.Evaluation.String() != nullUUID {
-		var ID big.Int
-		ID.SetString(p.Input, 10)
-		c.Logger().Printf("ID: %s", ID.String())
-		var lim big.Int
-		lim.SetString("1000", 10)
-		if p.Input == "" || len(p.Input) > 60 || ID.Cmp(&lim) == -1 || !ID.ProbablyPrime(6) {
-			return p.codeResult(c, "", T.Translate(c, "curso-python-input-field-error"))
-		}
-
-		c.Logger().Info("starting evaluation!")
-		tx := c.Value("tx").(*pop.Connection)
-		q := tx.Where("id = ?", p.code.Evaluation)
-		exists, err := q.Exists("evaluations")
-		if err != nil {
-			return p.codeResult(c, "", T.Translate(c, "app-status-internal-error"))
-		}
-		if !exists {
-			return p.codeResult(c, "", T.Translate(c, "curso-python-evaluation-not-found"))
-		}
-		eval := &models.Evaluation{}
-		if err = q.First(eval); err != nil {
-			return p.codeResult(c, "", T.Translate(c, "curso-python-evaluation-not-found"))
-		}
-		peval := pythonHandler{}
-		peval.userID = p.userID
-		peval.Source = eval.Solution
-		peval.Input = p.Input //eval.Inputs.String
-		err = peval.runPy()
-		if err != nil {
-			return p.codeResult(c, peval.Output, "Evaluation errored! "+err.Error()) // TODO this is the debug line
-			//return  p.codeResult(c,"","Evaluation errored! "+err.Error()) // TODO this is the production line
-		}
-		defer p.Put(DB, c)
-		p.Input = eval.Inputs.String
-		err = p.runPy()
-		if err != nil {
-			return p.codeResult(c, p.Output, err.Error())
-		}
-		if p.Output == peval.Output {
-			return p.codeResult(c, T.Translate(c, "curso-python-evaluation-success")+" ID:"+peval.Input)
-		} else {
-			return p.codeResult(c, "", T.Translate(c, "curso-python-evaluation-fail"))
-		}
+		return p.interpretEvaluation(c)
 	}
 	defer p.Put(DB, c)
 	err := p.runPy()
@@ -105,10 +62,57 @@ func InterpretPost(c buffalo.Context) error {
 	return p.codeResult(c)
 }
 
+//
+func (p pythonHandler) interpretEvaluation(c buffalo.Context) error {
+	var ID big.Int
+	ID.SetString(p.Input, 10)
+	c.Logger().Printf("ID: %s", ID.String())
+	var lim big.Int
+	lim.SetString("1000", 10)
+	if p.Input == "" || len(p.Input) > 60 || ID.Cmp(&lim) == -1 || !ID.ProbablyPrime(6) {
+		return p.codeResult(c, "", T.Translate(c, "curso-python-input-field-error"))
+	}
+	c.Logger().Info("starting evaluation!")
+	tx := c.Value("tx").(*pop.Connection)
+	q := tx.Where("id = ?", p.code.Evaluation)
+	exists, err := q.Exists("evaluations")
+	if err != nil {
+		return p.codeResult(c, "", T.Translate(c, "app-status-internal-error"))
+	}
+	if !exists {
+		return p.codeResult(c, "", T.Translate(c, "curso-python-evaluation-not-found"))
+	}
+	eval := &models.Evaluation{}
+	if err = q.First(eval); err != nil {
+		return p.codeResult(c, "", T.Translate(c, "curso-python-evaluation-not-found"))
+	}
+	peval := pythonHandler{}
+	peval.userID = p.userID
+	peval.Source = eval.Solution
+	peval.Input = p.Input //eval.Inputs.String
+	err = peval.runPy()
+	if err != nil {
+		return p.codeResult(c, peval.Output, "Evaluation errored! "+err.Error()) // TODO this is the debug line
+		//return  p.codeResult(c,"","Evaluation errored! "+err.Error()) // TODO this is the production line
+	}
+	defer p.Put(DBeval, c)
+	p.Input = eval.Inputs.String
+	err = p.runPy()
+	if err != nil {
+		return p.codeResult(c, p.Output, err.Error())
+	}
+	if p.Output == peval.Output {
+		return p.codeResult(c, T.Translate(c, "curso-python-evaluation-success")+" ID:"+peval.Input)
+	} else {
+		return p.codeResult(c, "", T.Translate(c, "curso-python-evaluation-fail"))
+	}
+}
+
 // adds code result to context response.
 // First and second string inputs will replace
 // stdout and stderr code output, respectively
 // so be careful not to delete important output/error
+// should be called only once per code upload
 func (p *pythonHandler) codeResult(c buffalo.Context, output ...string) error {
 	if len(output) == 1 {
 		p.result.Output = output[0]

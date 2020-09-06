@@ -85,6 +85,7 @@ func App() *buffalo.App {
 
 		curso := app.Group("/curso-python")
 		curso.Use(SafeList)
+		curso.Use(Authorize)
 		curso.GET("/eval", EvaluationIndex).Name("evaluation")
 		curso.GET("/eval/create", CursoEvaluationCreateGet).Name("evaluationCreate")
 		curso.POST("/eval/create", CursoEvaluationCreatePost)
@@ -94,6 +95,7 @@ func App() *buffalo.App {
 		curso.GET("/eval/e/{evalid}/delete", CursoEvaluationDelete).Name("evaluationDelete")
 
 		interpreter := app.Group("/py")
+		interpreter.Use(Authorize)
 		interpreter.POST("/", InterpretPost).Name("Interpret")
 
 		forum := app.Group("/f/{forum_title}")
@@ -170,4 +172,11 @@ func forceSSL() buffalo.MiddlewareFunc {
 
 func NotFound(c buffalo.Context) error {
 	return c.Render(404, r.HTML("meta/404.plush.html"))
+}
+
+// Call to must panics if err != nil
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

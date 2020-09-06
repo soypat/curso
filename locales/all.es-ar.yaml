@@ -13,6 +13,10 @@
   translation: "404 Recurso no encontrado"
 - id: app-status-internal-error
   translation: "500 Error interno"
+- id: app-user-required
+  translation: "Se requiere iniciar sesión para ver esa página"
+- id: app-user-auth-error
+  translation: "Hubo un error en la verificación del usuario. ¿Pruebe otra vez?"
 - id: app-users
   translation: "Usuarios"
 - id: app-user
@@ -32,13 +36,15 @@
 - id: app-pagination-perpage
   translation: "por página"
 - id: app-login
-  translation: "Iniciar sesión"
+  translation: "Sesión iniciada"
 - id: app-logout
-  translation: "Cerrar sesión"
+  translation: "Sesión cerrada"
 - id: app-auth-error
-  translation: "No se pudo completar la autenticacion de usuario"
+  translation: "No se pudo completar la verificación de usuario"
 - id: app-settings
   translation: "Configuración"
+- id: app-request-logout
+  translation: "Cerrar sesión"
 - id: app-request-login
   translation: "Iniciar sesión"
 - id: app-login-title

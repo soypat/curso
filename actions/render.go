@@ -10,7 +10,7 @@ import (
 
 	"github.com/gobuffalo/buffalo/render"
 	"github.com/gobuffalo/packr/v2"
-	"github.com/gobuffalo/plush"
+	"github.com/gobuffalo/plush/v4"
 	"github.com/soypat/curso/models"
 )
 

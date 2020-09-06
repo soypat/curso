@@ -14,6 +14,7 @@ require (
 	github.com/gobuffalo/nulls v0.4.0
 	github.com/gobuffalo/packr/v2 v2.8.0
 	github.com/gobuffalo/plush v3.8.3+incompatible
+	github.com/gobuffalo/plush/v4 v4.0.0
 	github.com/gobuffalo/pop/v5 v5.2.4
 	github.com/gobuffalo/validate/v3 v3.3.0
 	github.com/gofrs/uuid v3.3.0+incompatible

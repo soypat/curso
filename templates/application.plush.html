@@ -85,6 +85,9 @@
                         <i class="icon-home"></i>
                         <% } %> </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<%= evaluationPath() %>"><%= t("curso-python-evaluator") %></a>
+                </li>
                 <%= if (inForum) {
                 let ftitle = {forum_title:forum.Title}
                 let fpath = forumPath(ftitle)
@@ -92,17 +95,8 @@
                 <li class="nav-item">
                     <a class="nav-link" href="<%= fpath %>"><%= t("app-categories") %></a>
                 </li>
-                    <%= if (forum.Title == "Curso-Python") { %>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<%= evaluationPath() %>"><%= t("curso-python-evaluator") %></a>
-                    </li>
-                    <% } %>
                 <% } %>
-                <%= if (evaluation) { %>
-                <li class="nav-item">
-                    <a class="nav-link" href="<%= evaluationPath() %>"><%= t("curso-python-evaluator") %></a>
-                </li>
-                <% } %>
+
                 <%= if (current_user && current_user.Role == "admin") { %>
                 <li class="nav-item">
                     <a class="nav-link" href="<%= allUsersPath() %>"><%= t("app-users") %></a>
@@ -152,6 +146,9 @@
     <%= yield %>
 </div>
 <footer class="container">
+    <div class="row justify-content-center sponsors">
+        <img class="img-sponsor"  src="<%= assetPath("images/ieee.png") %>">
+    </div>
     <div class="row">
         <p class="col-sm-8"><%= t("app-footer-title") %> &middot; <a href="<%= t("app-footer-link-url") %>"><%= t("app-footer-link-name") %></a> <!--&middot; <a href="#">Terms</a>--></p>
         <p class="col-sm-4"><a href="#"><%= t("app-back-to-top") %></a></p>

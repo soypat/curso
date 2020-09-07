@@ -30,6 +30,10 @@ div.hljs , pre > code.hljs {/*code , .highlight { */
 }
 p > code.hljs {
     display:inline;
+    border-style: solid ;
+    border-width: thin;
+    border-radius: 5px;
+    border-color: lightgray;
 }
 
 footer {

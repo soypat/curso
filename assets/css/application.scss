@@ -18,7 +18,8 @@
     border-radius: 50%;
     height:28px;
 }
-div.hljs , code.hljs {/*code , .highlight { */
+/* Highlight.js */
+div.hljs , pre > code.hljs {/*code , .highlight { */
     border-style: solid ;
     border-radius: 10px;
     border-color: lightgray;
@@ -27,6 +28,10 @@ div.hljs , code.hljs {/*code , .highlight { */
     max-height: 24rem;
     max-width: 80rem;
 }
+p > code.hljs {
+    display:inline;
+}
+
 footer {
     padding-left:10%;
     padding-right:10%;
@@ -113,3 +118,4 @@ footer {
 .linedtextarea .codelines .lineselect {
     color: red;
 }
+

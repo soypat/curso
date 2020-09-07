@@ -28,6 +28,16 @@ Here is an example, running postgres inside a docker container:
 $> docker run --name curso-postgres -e POSTGRES_PASSWORD=1337 -p 5432:5432 -d postgres
 ```
 
+or optionally you can straight up create the curso db to not have to let 
+buffalo create it on it's own: 
+```bash
+docker run --name forum-postgres  \
+-e POSTGRES_PASSWORD=1337 \
+-e POSTGRES_USER=pato \
+-e POSTGRES_DB=curso \
+-p 5432:5432 -d postgres
+```
+with this you are ready to run `buffalo pop migrate`
 ### Create Your Databases
 
 Ok, so you've edited the "database.yml" file and started postgres, now Buffalo can create the databases in that file for you:

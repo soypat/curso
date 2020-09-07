@@ -15,8 +15,8 @@ production:
   url: {{envOr "DATABASE_URL" "postgres://pato:1337@127.0.0.1:5432/curso?sslmode=disable"}}
 
 # docker run --name pyc-postgres -e POSTGRES_PASSWORD=1337 -p 5432:5432 -d postgres
-# docker run --name forum \
-#  > -e POSTGRES_PASSWORD=1337 \
-#> -e POSTGRES_USER=pato \
-#> -e POSTGRES_DB=curso \
-# > -p 5432:5432 -d postgres
+# docker run --name forum
+#   -e POSTGRES_PASSWORD=1337 \
+# -e POSTGRES_USER=pato \
+# -e POSTGRES_DB=curso \
+#  -p 5432:5432 -d postgres

@@ -128,6 +128,7 @@ func App() *buffalo.App {
 
 		admin := app.Group("/admin")
 		admin.Use(SiteStruct)
+		admin.Use(AdminAuth,SafeList)
 		admin.GET("/f", manageForum)
 		admin.GET("newforum", createForum)
 		admin.POST("newforum/post", createForumPost)

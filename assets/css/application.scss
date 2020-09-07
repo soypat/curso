@@ -25,6 +25,8 @@ div.hljs , pre > code.hljs {/*code , .highlight { */
     border-color: lightgray;
     border-width: thin;
     overflow: scroll;
+    overflow-y:auto;
+    overflow-x:auto;
     max-height: 24rem;
     max-width: 80rem;
 }

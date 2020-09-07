@@ -104,6 +104,7 @@ func manageForum(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	forums := &models.Forums{}
 	q := tx.PaginateFromParams(c.Params())
+	c.Set("pagination", q.Paginator)
 	if err := q.All(forums); err != nil {
 		c.Logger().Warn("Error looking for forums in manageForum. Maybe no forums present?")
 		c.Set("forums", forums)
@@ -111,7 +112,6 @@ func manageForum(c buffalo.Context) error {
 	}
 	//sort.Sort(forums) // TODO implement sort interface for forum
 	c.Set("forums", forums)
-	c.Set("pagination", q.Paginator)
 	return c.Render(200, r.HTML("forums/manage.plush.html"))
 }
 

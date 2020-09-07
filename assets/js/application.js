@@ -19,7 +19,7 @@ $(() => {
         }
         let pre = div.firstChild
         pre.setAttribute("class","hljs "+langName)
-        div.setAttribute("class","hljs highlight "+langName) // erase autodetected lang
+        div.setAttribute("class","")//"hljs highlight "+langName) // erase autodetected lang
     })
     document.querySelectorAll('code').forEach((block) => {
         let attr = block.getAttribute("class")
@@ -30,11 +30,9 @@ $(() => {
     render(RENDERERS);
 });
 
-
-
 RENDERERS.push(renderCodeBlock)
 function renderCodeBlock() {
-    document.querySelectorAll('code , .highlight').forEach((block) => {
+    document.querySelectorAll('code , .highlight, .hljs').forEach((block) => {
         hljs.highlightBlock(block);
     });
 

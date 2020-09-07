@@ -20,6 +20,8 @@ func EvaluationIndex(c buffalo.Context) error {
 }
 
 func CursoEvaluationCreateGet(c buffalo.Context) error {
+	e := models.Evaluation{}
+	c.Set("evaluation",e)
 	return c.Render(200, r.HTML("curso/eval-create.plush.html"))
 }
 
@@ -34,14 +36,14 @@ func CursoEvaluationCreatePost(c buffalo.Context) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
+	c.Set("evaluation", eval)
 	if verrs.HasAny() {
-		c.Set("evaluation", eval)
-		c.Flash().Add("success", T.Translate(c, "curso-python-evaluation-add-fail"))
+		c.Flash().Add("danger", T.Translate(c, "curso-python-evaluation-add-fail"))
 		return c.Render(422, r.HTML("topics/create.plush.html"))
 	}
 	c.Logger().Info("CursoEvaluationCreatePost success")
 	c.Flash().Add("success", T.Translate(c, "curso-python-evaluation-add-success"))
-	return c.Render(200, r.HTML("curso/eval-create.plush.html"))
+	return c.Render(200, r.HTML("curso/eval-get.plush.html"))
 }
 
 func CursoEvaluationEditGet(c buffalo.Context) error {

@@ -24,46 +24,18 @@
     <% } %>
     <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/highlight.min.js"></script>
     <script>
+        // RENDERS contains all functions that need to be executed in their order
+        // for html to look tip top quality
         var RENDERERS = [];
-        RENDERERS.push(renderCodeBlock)
-        // iterates over RENDER and executes rendering tasks
+        // iterates over RENDERERS and executes rendering tasks
         // RENDER contains all rendering functions.
         // first in, last rendered
         function render(renderers) {
-            for (let fn in renderers) {
-                renderers[renderers.length - fn - 1]()
+            const N = renderers.length
+            for (let i = 0; i < N; i++) {
+                renderers[i]()
             }
         }
-        function renderCodeBlock() {
-            document.querySelectorAll('code , .highlight').forEach((block) => {
-                hljs.highlightBlock(block);
-            });
-        }
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelectorAll('code').forEach((block) => {
-                if (!block.hasAttribute("class")) {
-                    block.setAttribute("class","language-python");
-                }
-                render(RENDERERS);
-            });
-            render(RENDERERS);
-        });
-        // Use tabs in content/markdowny textareas
-        $(document).delegate('#content', 'keydown', function (e) {
-            var keyCode = e.keyCode || e.which;
-            if (keyCode == 9) {
-                e.preventDefault();
-                var start = this.selectionStart;
-                var end = this.selectionEnd;
-                // set textarea value to: text before caret + tab + text after caret
-                $(this).val($(this).val().substring(0, start)
-                    + "\t"
-                    + $(this).val().substring(end));
-                // put caret at right position again
-                this.selectionStart =
-                    this.selectionEnd = start + 1;
-            }
-        });
     </script>
 </head>
 <body>
@@ -147,6 +119,9 @@
 </div>
 <footer class="container">
     <div class="row justify-content-center sponsors">
+        <a href="<%=t("app-footer-link-url") %>">
+            <img class="img-sponsor"  src="<%= assetPath("images/ieeesbitba.png") %>">
+        </a>
         <img class="img-sponsor"  src="<%= assetPath("images/ieee.png") %>">
     </div>
     <div class="row">

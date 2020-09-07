@@ -4,25 +4,28 @@
 @import "buffalo";
 
 .img-sponsor {
-    height:200px;
-
+    height:70px;
+    margin-left: 2rem;
+    margin-right:2rem;
 }
 
 .img-circle {
 	border-radius: 50%;
 	width: 50px;
 }
+
 .avatar-img {
     border-radius: 50%;
     height:28px;
 }
-.hljs {/*code , .highlight { */
+div.hljs {/*code , .highlight { */
     border-style: solid ;
     border-radius: 10px;
     border-color: lightgray;
     border-width: thin;
     overflow: scroll;
-    max-height: 22rem;
+    max-height: 24rem;
+    max-width: 80rem;
 }
 footer {
     padding-left:10%;
@@ -43,7 +46,7 @@ footer {
 }
 
 /* INTERPRETER + JQUERY LINED AREA */
-#code, #output, pre, .lines{
+#code, #output, .lines{
     /* The default monospace font on OS X is ugly, so specify Menlo
      * instead. On other systems the default monospace font will be used. */
     font-family: Menlo, monospace;

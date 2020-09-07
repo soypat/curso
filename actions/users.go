@@ -84,12 +84,7 @@ func UserSettingsPost(c buffalo.Context) error {
 		return c.Redirect(302, "userSettingsPath()")
 	}
 	c.Session().Set("code_theme", user.Theme)
-	user.Nick = s
-	if userDB.Nick == "" && user.Nick == "" {
-		c.Flash().Add("danger", T.Translate(c, "user-settings-nick-empty"))
-		return c.Redirect(302, "userSettingsPath()")
-	}
-	userDB.Nick = user.Nick
+	userDB.Nick = s
 	if err := tx.Update(userDB); err != nil {
 		return errors.WithStack(err)
 	}

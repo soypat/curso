@@ -23,10 +23,15 @@ let ctx = {evalid: evaluation.ID}
     </div>
     <% } %>
 </div>
-<%= if (current_user.Role == "admin") { %>
+<%= if (current_user.Role == "admin") {
+let header = "# Solución " + evaluation.Title + `(invisible )
+`
+%>
 <div class="row">
-    <pre class="col-md-12"><code class="col-md-7" style="height:12rem;"># Solución <%= evaluation.Title %> (invisible a usuarios comunes)
-<%=evaluation.Solution %></code></pre>
+    <div class="col-md-7">
+        <%= codeFmt(header+evaluation.Solution, "python") %>
+    </div>
+
 </div>
 <% } %>
 

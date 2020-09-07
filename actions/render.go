@@ -39,6 +39,7 @@ func init() {
 			"csrf": func() template.HTML {
 				return template.HTML("<input name=\"authenticity_token\" value=\"<%= authenticity_token %>\" type=\"hidden\">")
 			},
+			"codeFmt": codeFmt,
 			"codeTheme":            codeTheme,
 			"codeThemeFormOptions": codeThemeOptions,
 			"avatar": func(user *models.User) template.HTML { // style="height:28px;border-radius:50%;"
@@ -91,6 +92,12 @@ func timeSince(created time.Time, ctx plush.HelperContext) string {
 	return fmt.Sprintf("%ds", int(delta.Seconds()))
 }
 
+func codeFmt(md, code string, ctx plush.HelperContext) template.HTML {
+	md = "```" + code + "\n" + md + "\n```"
+	mdHTML, _ := plush.MarkdownHelper(md, ctx)
+	return mdHTML
+}
+
 const defaultTheme = "idea" //"idea"
 const defaultThemeURL = "//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/idea.min.css"
 
@@ -112,15 +119,17 @@ var codeThemes = map[string]string{
 	"xt256 (dark)":             "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/xt256.min.css",
 	"gradient dark":            "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/gradient-dark.min.css",
 	"grayscale":                "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/grayscale.min.css",
-	"gml":                      "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/gml.min.css",
+	"gml (dark)":               "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/gml.min.css",
+	"ir black":                 "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/ir-black.min.css",
+	"night owl (dark)":         "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/night-owl.min.css",
 	"dark":                     "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/dark.min.css",
 	"a 11 y dark":              "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/a11y-dark.min.css",
 	"tomorrow night blue":      "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/tomorrow-night-blue.min.css",
 	"tomorrow night eighties":  "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/tomorrow-night-eighties.min.css",
 	"tomorrow":                 "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/tomorrow.min.css",
 	"xcode":                    "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/xcode.min.css",
-	"railscasts":               "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/railscasts.min.css",
-	"pojoaque":                 "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/pojoaque.min.css",
+	"railscasts (dark)":        "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/railscasts.min.css",
+	"pojoaque (dark)":          "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/pojoaque.min.css",
 	"qt creator dark":          "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/qtcreator_dark.min.css",
 	"qt creator light":         "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/qtcreator_light.min.css",
 	"shades of purple":         "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/shades-of-purple.min.css",
@@ -133,6 +142,7 @@ var codeThemes = map[string]string{
 	"far":                      "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/far.min.css",
 	"dracula":                  "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/dracula.min.css",
 	"purebasic":                "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/purebasic.min.css",
+	"satanus":                  "/assets/css/hljs-satanus.css",
 }
 
 func codeTheme(theme string) template.HTML {

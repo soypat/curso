@@ -31,9 +31,9 @@ var DBeval *bbolt.DB
 
 func init() {
 	var err error
-	DB, err = bbolt.Open("tmp/codes.db", 0600, &bbolt.Options{Timeout: time.Second})
+	DB, err = bbolt.Open("tmp/codes.db", 0600, &bbolt.Options{Timeout: 4*time.Second})
 	must(err)
-	DBeval, err = bbolt.Open("tmp/codeseval.db", 0600, &bbolt.Options{Timeout: time.Second})
+	DBeval, err = bbolt.Open("tmp/codeseval.db", 0600, &bbolt.Options{Timeout: 4*time.Second})
 	must(err)
 }
 

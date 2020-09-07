@@ -47,7 +47,7 @@ func (u User) Icon(label string) template.HTML {
 	default:
 		icon = "user"
 	}
-	return template.HTML(fmt.Sprintf("<i class=\"icon-%s\"> </i>%s", icon, flect.Capitalize(label)))
+	return template.HTML(fmt.Sprintf("<i title=\"%s\" class=\"icon-%s\"> </i>%s",u.Role, icon, flect.Capitalize(label)))
 }
 
 // for now just return u.AvatarURL

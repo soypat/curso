@@ -1,5 +1,6 @@
 <%= if (current_user.Role == "admin") { %>
 <h1>USUARIOS</h1>
+<a href="<%= safeListPath() %>">Safelist</a>
 <div class="row text-center">
     <div class="col-1">
         Avatar
@@ -27,7 +28,7 @@ if (user.Role == "banned") {
     color = "salmon"
 }
 %>
-    <div class="row text-center" style="background: <%= color %>;">
+    <div class="row text-center border-top border-secondary py-1" style="background: <%= color %>;">
         <div class="col-1">
             <%= avatar(derefUser(user)) %>
         </div>
@@ -86,11 +87,8 @@ if (user.Role == "banned") {
     </div>
 </div>
 
-<hr>
-
-
 <% } %>
-
+<hr>
 <% } else { %>
     <h1> No se encontró nada aquí ;)</h1>
 <% } %>

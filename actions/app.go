@@ -84,8 +84,7 @@ func App() *buffalo.App {
 		app.GET("/f", NotFound)
 
 		curso := app.Group("/curso-python")
-		curso.Use(SafeList)
-		curso.Use(Authorize)
+		curso.Use(SafeList,Authorize)
 		curso.GET("/eval", EvaluationIndex).Name("evaluation")
 		curso.GET("/eval/create", CursoEvaluationCreateGet).Name("evaluationCreate")
 		curso.POST("/eval/create", CursoEvaluationCreatePost)
@@ -95,7 +94,7 @@ func App() *buffalo.App {
 		curso.GET("/eval/e/{evalid}/delete", CursoEvaluationDelete).Name("evaluationDelete")
 
 		interpreter := app.Group("/py")
-		interpreter.Use(Authorize)
+		curso.Use(SafeList,Authorize)
 		interpreter.POST("/", InterpretPost).Name("Interpret")
 
 		forum := app.Group("/f/{forum_title}")
@@ -112,10 +111,11 @@ func App() *buffalo.App {
 		catGroup.POST("/createTopic", TopicCreatePost)
 
 		topicGroup := catGroup.Group("/{tid}")
-		topicGroup.Use(SafeList)
+
 		topicGroup.Use(SetCurrentTopic)
 		topicGroup.GET("/", TopicGet).Name("topicGet") //
 		topicGroup.GET("/edit", TopicEditGet).Name("topicEdit")
+		topicGroup.Use(Authorize,SafeList)
 		topicGroup.POST("/edit", TopicEditPost)
 		topicGroup.GET("/reply", ReplyGet).Name("reply")
 		topicGroup.POST("/reply", ReplyPost)
@@ -137,12 +137,13 @@ func App() *buffalo.App {
 		admin.GET("users/{uid}/admin", AdminUserGet).Name("adminUser")
 		admin.GET("users/{uid}/normalize", NormalizeUserGet).Name("normalizeUser")
 
+		admin.GET("safelist",SafeListGet).Name("safeList")
+		admin.POST("safelist",SafeListPost)
 		admin.GET("/cbu", pyDBBackup).Name("cursoCodeBackup")
 		admin.GET("/cbureader", zipAssetFolder("uploadReader")).Name("cursoCodeBackupReader")
 
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
-
 	return app
 }
 

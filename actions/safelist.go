@@ -108,14 +108,8 @@ func SafeListPost(c buffalo.Context) error {
 
 type void struct{}
 
-var null = void{}
-
 const safeDomain = "itba.edu.ar"
 
-// nasty set implementation
-var safelist = map[string]void{
-
-}
 
 // works kind of like authorize but does not verify user exists.
 func SafeList(next buffalo.Handler) buffalo.Handler {
@@ -148,6 +142,11 @@ func SafeList(next buffalo.Handler) buffalo.Handler {
 			c.Session().Clear()
 			_ = c.Session().Save()
 			return c.Redirect(302, "/") //, render.Data{"provider":user.Provider})
+		}
+		user := u.(*models.User)
+		if user.Role == "" {
+			user.Role = "safe"
+			c.Set("current_user",u)
 		}
 		return next(c)
 	}

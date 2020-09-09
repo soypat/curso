@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/envy"
 	forcessl "github.com/gobuffalo/mw-forcessl"
@@ -64,27 +65,30 @@ func App() *buffalo.App {
 		// -- Authorization/Security procedures --
 		// sets user data in context from session data.
 		app.Use(SetCurrentUser)
-
+		app.Use(SafeList,Authorize) // AUTHORIZATION MIDDLEWARE. Checks if user is in safelist
 		app.Use(SiteStruct)
-		app.GET("/auth", AuthHome)
+		//app.GET("/auth", AuthHome)
 		bah := buffalo.WrapHandlerFunc(gothic.BeginAuthHandler) // Begin authorization handler = bah
 		auth := app.Group("/auth")
-		//auth.GET("/",AuthHome)
+		auth.GET("/",AuthHome)
 		auth.GET("/{provider}/callback", AuthCallback)
 		auth.GET("/{provider}", bah)
-		auth.Middleware.Skip(Authorize, bah, AuthCallback)      // don't ask for authorization on authorization page
-		auth.Middleware.Skip(SetCurrentUser, bah, AuthCallback) // set current user needs to seek user in db. if no users present in db setcurrentuser fails
 		auth.DELETE("/logout", AuthDestroy).Name("logout")
+		auth.Middleware.Skip(SafeList, bah, AuthCallback,AuthHome, AuthDestroy)      // don't ask for user to be on safelist on authorization page
+		auth.Middleware.Skip(Authorize, bah, AuthCallback,AuthHome)      // don't ask for authorization on authorization page
+		auth.Middleware.Skip(SetCurrentUser, bah, AuthCallback,AuthHome) // set current user needs to seek user in db. if no users present in db setcurrentuser fails
 
 		app.GET("/u", UserSettingsGet).Name("userSettings")
 		app.POST("/u", UserSettingsPost)
 
 		// home page setup
 		app.GET("/", manageForum) //TODO change homepage
+		app.Middleware.Skip(SafeList,manageForum)
+		app.Middleware.Skip(Authorize,manageForum)
 		app.GET("/f", NotFound)
 
+		// All things curso de python
 		curso := app.Group("/curso-python")
-		curso.Use(SafeList,Authorize)
 		curso.GET("/eval", EvaluationIndex).Name("evaluation")
 		curso.GET("/eval/create", CursoEvaluationCreateGet).Name("evaluationCreate")
 		curso.POST("/eval/create", CursoEvaluationCreatePost)
@@ -93,38 +97,46 @@ func App() *buffalo.App {
 		curso.POST("/eval/e/{evalid}/edit", CursoEvaluationEditPost)
 		curso.GET("/eval/e/{evalid}/delete", CursoEvaluationDelete).Name("evaluationDelete")
 
+
 		interpreter := app.Group("/py")
-		curso.Use(SafeList,Authorize)
 		interpreter.POST("/", InterpretPost).Name("Interpret")
 
+		// Actual forum stuiff
 		forum := app.Group("/f/{forum_title}")
 		forum.GET("/c", NotFound)
 		forum.Use(SetCurrentForum)
 		forum.GET("/", forumIndex).Name("forum")
 		forum.GET("/create", CategoriesCreateGet).Name("catCreate")
 		forum.POST("/create", CategoriesCreatePost)
+		forum.Middleware.Skip(Authorize,forumIndex,NotFound)
+		forum.Middleware.Skip(SafeList,forumIndex,NotFound)
 
 		catGroup := forum.Group("/c/{cat_title}")
 		catGroup.Use(SetCurrentCategory)
 		catGroup.GET("/", CategoriesIndex).Name("cat")
 		catGroup.GET("/createTopic", TopicCreateGet).Name("topicCreate")
 		catGroup.POST("/createTopic", TopicCreatePost)
+		catGroup.Middleware.Skip(Authorize,CategoriesIndex)
+		catGroup.Middleware.Skip(SafeList,CategoriesIndex)
 
 		topicGroup := catGroup.Group("/{tid}")
 
 		topicGroup.Use(SetCurrentTopic)
 		topicGroup.GET("/", TopicGet).Name("topicGet") //
 		topicGroup.GET("/edit", TopicEditGet).Name("topicEdit")
-		topicGroup.Use(Authorize,SafeList)
 		topicGroup.POST("/edit", TopicEditPost)
 		topicGroup.GET("/reply", ReplyGet).Name("reply")
 		topicGroup.POST("/reply", ReplyPost)
+		topicGroup.Middleware.Skip(Authorize,TopicGet)
+		topicGroup.Middleware.Skip(SafeList,TopicGet)
 
 		replyGroup := topicGroup.Group("/{rid}")
 		replyGroup.Use(SetCurrentReply)
 		replyGroup.GET("/edit", editReplyGet).Name("replyEdit")
 		replyGroup.POST("/edit", editReplyPost)
 		replyGroup.DELETE("/edit", DeleteReply)
+
+
 
 		admin := app.Group("/admin")
 		admin.Use(SiteStruct)
@@ -142,6 +154,11 @@ func App() *buffalo.App {
 		admin.POST("safelist",SafeListPost)
 		admin.GET("/cbu", pyDBBackup).Name("cursoCodeBackup")
 		admin.GET("/cbureader", zipAssetFolder("uploadReader")).Name("cursoCodeBackupReader")
+
+		// We associate the HTTP 404 status to a specific handler.
+		// All the other status code will still use the default handler provided by Buffalo.
+		app.ErrorHandlers[404] = err404
+		app.ErrorHandlers[500] = err500
 
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
@@ -181,4 +198,14 @@ func must(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func err500(status int, err error, c buffalo.Context) error {
+	c.Flash().Add("danger","Internal server error (500): "+err.Error()) // T.Translate(c,"app-status-internal-error")
+	return c.Redirect(302,fmt.Sprintf("%s",c.Value("current_path")))
+}
+
+func err404(status int, err error, c buffalo.Context) error {
+	c.Flash().Add("warning", "Page not found (404)") // T.Translate(c,"app-not-found")
+	return c.Redirect(302,"/")
 }

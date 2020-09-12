@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/gobuffalo/buffalo v0.16.14
+	github.com/gobuffalo/buffalo-heroku v1.0.9 // indirect
 	github.com/gobuffalo/buffalo-pop/v2 v2.2.0
 	github.com/gobuffalo/envy v1.9.0
 	github.com/gobuffalo/flect v0.2.2
@@ -13,13 +14,13 @@ require (
 	github.com/gobuffalo/mw-paramlogger v1.0.0
 	github.com/gobuffalo/nulls v0.4.0
 	github.com/gobuffalo/packr/v2 v2.8.0
-	github.com/gobuffalo/plush v3.8.3+incompatible
 	github.com/gobuffalo/plush/v4 v4.0.0
 	github.com/gobuffalo/pop/v5 v5.2.4
+	github.com/gobuffalo/suite v2.8.2+incompatible
 	github.com/gobuffalo/validate/v3 v3.3.0
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/markbates/goth v1.64.2
-	github.com/nicksnyder/go-i18n v1.10.0
+	github.com/markbates/grift v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/unrolled/secure v1.0.8
 	go.etcd.io/bbolt v1.3.5

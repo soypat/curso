@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"fmt"
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/envy"
 	forcessl "github.com/gobuffalo/mw-forcessl"
@@ -22,7 +21,7 @@ import (
 var ENV = envy.Get("GO_ENV", "development")
 var app *buffalo.App
 var T *i18n.Translator
-
+//var TT *i18n.
 const hourDiffUTC = 3 // how many hours behind is UTC respect to current time. Argentina == 3h
 
 // App is where all routes and middleware for buffalo
@@ -61,7 +60,6 @@ func App() *buffalo.App {
 		app.Use(popmw.Transaction(models.DB))
 		// Setup and use translations:
 		app.Use(translations())
-
 		// -- Authorization/Security procedures --
 		// sets user data in context from session data.
 		app.Use(SetCurrentUser)
@@ -158,7 +156,7 @@ func App() *buffalo.App {
 		// We associate the HTTP 404 status to a specific handler.
 		// All the other status code will still use the default handler provided by Buffalo.
 		app.ErrorHandlers[404] = err404
-		app.ErrorHandlers[500] = err500
+		//app.ErrorHandlers[500] = err500
 
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
@@ -202,7 +200,14 @@ func must(err error) {
 
 func err500(status int, err error, c buffalo.Context) error {
 	c.Flash().Add("danger","Internal server error (500): "+err.Error()) // T.Translate(c,"app-status-internal-error")
-	return c.Redirect(302,fmt.Sprintf("%s",c.Value("current_path")))
+	return c.Redirect(302,"/")
+}
+
+func terr404(status int, err error, c buffalo.Context) error {
+	c.Set("T", T) // This will set T for the Translate function.
+	translation := T.Translate(c,"app-not-found")
+	c.Flash().Add("warning",translation)
+	return c.Redirect(302,"/")
 }
 
 func err404(status int, err error, c buffalo.Context) error {

@@ -1,8 +1,36 @@
+/* Bootstap containers. variables defined in node_modules/bootstrap/scss/_variables.scss
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px
+) !default; */
+
+
+/* BOOTSTRAP COLORS defined in node_modules/bootstrap/scss/_variables.scss
+$body-bg: #000;
+$body-color:    #111;
+$primary:       #111 ;
+$secondary:     #111 ;
+$success:       #111;
+$info:          #111;
+$warning:       #111;
+$danger:        #111;
+$light:         #111;
+$dark:          #111;
+*/
+
+// $body-color:    #111;
+// $body-bg: #444;
+$primary: #222; // Changes primary color to #111
+
+// We import bootstrap after defining our colors and styles so bootstrap does not overwrite them with defaults
 @import "~bootstrap/scss/bootstrap.scss";
 @import "~bootstrap/dist/css/bootstrap.min.css";
 
 @import "buffalo";
 
+// Below are application specific styles
 .img-sponsor {
     height:70px;
     margin-left: 2rem;
@@ -18,8 +46,16 @@
     border-radius: 50%;
     height:28px;
 }
+
+// markdown images
+p > img {
+    max-width: 60%;
+    max-height: 350px;
+}
+
 /* Highlight.js */
-div.hljs , pre > code.hljs {/*code , .highlight { */
+// for codeblocks.
+div > pre.hljs , pre > code.hljs {
     border-style: solid ;
     border-radius: 10px;
     border-color: lightgray;
@@ -30,7 +66,7 @@ div.hljs , pre > code.hljs {/*code , .highlight { */
     max-height: 24rem;
     max-width: 80rem;
 }
-p > code.hljs {
+p > code.hljs { // Inline code
     display:inline;
     border-style: solid ;
     border-width: thin;
@@ -46,6 +82,7 @@ footer {
     bottom: 0;
     width:100%;
 }
+// form styles
 .help-block {
     color: grey;
 }

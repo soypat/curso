@@ -19,6 +19,7 @@ require (
 	github.com/gobuffalo/validate/v3 v3.3.0
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/markbates/goth v1.64.2
+	github.com/nicksnyder/go-i18n v1.10.0
 	github.com/pkg/errors v0.9.1
 	github.com/unrolled/secure v1.0.8
 	go.etcd.io/bbolt v1.3.5

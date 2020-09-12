@@ -8,10 +8,10 @@
     <div class="col-md-2 offset-md-8 text-right">
         <%= if  ( current_user.IsAuthor(reply.AuthorID) || current_user.Role == "admin" ) { %>
         <button type="button" class="btn btn-danger btn-sm m-0" data-toggle="modal" data-target="#reply-modal-<%= reply.ID %>">
-            <i class="icon-trash"> </i>
+            <%= icon("trash-fill",1,1) %>
         </button>
         <a href="<%= replyEditPath(ctx) %>" class="btn btn-secondary btn-sm m-0">
-            <i class="icon-edit"> </i>
+            <%= icon("blockquote-right",1,1) %>
         </a>
         <% } %>
     </div>

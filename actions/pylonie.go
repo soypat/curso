@@ -62,7 +62,11 @@ func InterpretPost(c buffalo.Context) error {
 	return p.codeResult(c)
 }
 
-//
+// This runs user submitted code and compares with evaluator output
+// it then saves the result and writes to response.
+// Interpreter will show if user submitted a correct result or incorrect
+// or show line of error/exception
+// List of prime numbers generator https://play.golang.org/p/ya7SuOH2-Ai
 func (p pythonHandler) interpretEvaluation(c buffalo.Context) error {
 	var ID big.Int
 	ID.SetString(p.Input, 10)

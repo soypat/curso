@@ -7,7 +7,7 @@
     <%= stylesheetTag("application.css") %>
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- font awesome icons. Available: https://fontawesome.com/v3.2.1/icons/ -->
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+   <!-- <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"> -->
     <meta name="csrf-param" content="authenticity_token"/>
     <meta name="csrf-token" content="<%= authenticity_token %>"/>
     <link rel="icon"  href="<%= assetPath("images/logo-curso32x32.png") %>">
@@ -54,7 +54,7 @@
                         <img src="data:image/png;base64,<%= forum.LogoImage() %>" class="img-circle" style="width: 50px;">
                         <% } else { %>
                         <a class="navbar-brand" href="<%= root_path %>">
-                        <i class="icon-home"></i>
+                        <%= icon("house-fill",2,2) %>
                         <% } %> </a>
                 </li>
                 <li class="nav-item">
@@ -88,16 +88,15 @@
                            <!-- <img src="data:image/png;base64,<%= current_user.Image() %>"
                                  alt="<%= current_user.Name %>" style="width:50px;" class="img-circle"> -->
 
-                            <%= current_user.Icon(displayName(current_user))%>
-
-                            <i class="icon-caret-down"></i>
+                            <%= userIcon(current_user,1) %> <%= displayName(current_user) %>
+                            <%= icon("caret-down-fill",1,1) %>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item nav-link" href="<%=user_settings_path%>"><i class="icon-cog"></i> <%=
+                            <a class="dropdown-item nav-link" href="<%=user_settings_path%>"><%= icon("gear-fill",1,1) %> <%=
                                 t("app-settings") %> </a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item nav-link" href="<%= logoutPath() %>"
-                               data-method="DELETE"><i class="icon-signout"></i> <%=
+                               data-method="DELETE"><%= icon("door-open",1,1) %> <%=
                                 t("app-request-logout") %></a>
                         </div>
                     </div>

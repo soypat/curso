@@ -20,7 +20,6 @@ func init() {
 	gothic.Store = App().SessionStore
 	goth.UseProviders(
 		google.New(os.Getenv("GGL_KEY_FORUM"), os.Getenv("GGL_SECRET_FORUM"), fmt.Sprintf("%s%s", App().Host, "/auth/google/callback"),
-			//google.New(os.Getenv("GOOGLE_KEY"), os.Getenv("GOOGLE_SECRET"), fmt.Sprintf("%s%s", App().Host, "/auth/google/callback"),
 			"profile", "email"),
 	)
 }

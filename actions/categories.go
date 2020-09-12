@@ -28,6 +28,10 @@ func CategoriesIndex(c buffalo.Context) error {
 	c.Set("category", cat)
 	topics := &models.Topics{}
 	q := tx.BelongsTo(cat).Order("updated_at desc").PaginateFromParams(c.Params())
+	if c.Param("per_page") == "" { // set default max results per page if not set
+		q.Paginator.PerPage = 8
+	}
+
 	if err := q.All(topics); err != nil {
 		c.Logger().Warnf("'tx.BelongsTo(cat).Order(\"updated_at desc\").PaginateFromParams(c.Params())' FAILED!")
 		return c.Error(404, err)
@@ -88,11 +92,6 @@ func CategoriesCreatePost(c buffalo.Context) error {
 	}
 	c.Flash().Add("success", fmt.Sprintf("Category %s created", cat.Title))
 	return c.Redirect(302, "forumPath()", render.Data{"forum_title": f.Title})
-}
-
-// CategoriesDetail default implementation.
-func CategoriesDetail(c buffalo.Context) error {
-	return c.Render(http.StatusOK, r.HTML("categories/detail.html"))
 }
 
 // SetCurrentCategory attempts to find a category and set context `category`

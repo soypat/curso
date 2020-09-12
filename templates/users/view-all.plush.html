@@ -38,22 +38,22 @@ if (user.Role == "banned") {
             <%= if (user.Nick != "") { %> (<%= user.Nick %>) <% } %>
         </div>
         <div class="col-1">
-            <%= user.Icon("") %>
+            <%= userIcon(derefUser(user),1) %>
         </div>
         <div class="col-2">
             <%= if (user.Role != "banned") {%>
             <button type="button" class="btn btn-danger btn-sm m-0" data-toggle="modal" data-target="#user-modal-<%= user.ID %>">
-                <i class="icon-legal"> <%=t("topic-delete") %></i>
+                <span> <%= icon("hammer",1,1) %> <%=t("topic-delete") %></span>
             </button>
             <% } %>
             <%= if (user.Role != "admin") {%>
             <a type="button" class="btn btn-primary btn-sm m-0" href="<%= adminUserPath({uid: user.ID}) %>">
-                <i class="icon-shield"> <%=t("topic-delete") %></i>
+                <span> <%= icon("shield-fill",1,1) %> <%=t("topic-delete") %></span>
             </a>
             <% } %>
             <%= if (user.Role != "") {%>
             <a type="button" class="btn btn-secondary btn-sm m-0" href="<%= normalizeUserPath({uid: user.ID}) %>">
-                <i class="icon-meh"> <%=t("topic-delete") %></i>
+               <span><%= icon("emoji-expressionless",1,1) %><%=t("topic-delete") %></span>
             </a>
             <% } %>
         </div>
@@ -75,7 +75,7 @@ if (user.Role == "banned") {
                 <div class="row">
                     <div class="col text-left">
                         <a href="<%= banUserPath({uid: user.ID}) %>" class="btn btn-danger">
-                            <i class="icon-trash"><%= t("topic-delete") %></i>
+                            <span> <%= icon("hammer",1,1) %> <%=t("topic-delete") %></span>
                         </a>
                     </div>
                     <div class="col text-right">

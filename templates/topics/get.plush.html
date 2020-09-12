@@ -19,20 +19,20 @@
         <%= if (current_user.IsAuthor(topic.AuthorID) || current_user.Role == "admin" ){ %>
         <%= if (len(topic.Replies) == 0 || current_user.Role == "admin") { %>
         <button type="button" class="btn btn-danger btn-sm m-0" data-toggle="modal" data-target="#topic-modal-<%= topic.ID %>">
-                <i class="icon-trash"> <%=t("topic-delete") %></i>
+                <%= icon("trash-fill",1,1) %> <%=t("topic-delete") %>
         </button>
         <% } %>
         <a href="<%= topicEditPath(ctx) %>" class="btn btn-secondary btn-sm ">
-            <i class="icon-edit"> <%=t("topic-edit") %></i>
+            <%= icon("blockquote-right",1,1) %> <%=t("topic-edit") %>
         </a>
         <% } %>
         <%= if (current_user) { %>
         <a href="<%= replyPath(ctx) %>" class="btn btn-secondary btn-sm">
-            <i class="icon-mail-reply"> <%=t("topic-reply") %></i>
+            <%= icon("arrow-return-left",1,1) %>  <%=t("topic-reply") %>
         </a>
         <% } else { %>
         <a href="<%= authPath({provider:"google"}) %>" class="btn btn-secondary btn-sm">
-            <i class="icon-user"> <%=t("app-request-login") %></i>
+        <%= icon("person-fill",1,1) %> <%=t("app-request-login") %>
         </a>
         <% } %>
     </div>

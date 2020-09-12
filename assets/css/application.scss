@@ -22,7 +22,7 @@ $dark:          #111;
 
 // $body-color:    #111;
 // $body-bg: #444;
-$primary: #222; // Changes primary color to #111
+// $primary: #222; // Changes primary color to #111
 
 // We import bootstrap after defining our colors and styles so bootstrap does not overwrite them with defaults
 @import "~bootstrap/scss/bootstrap.scss";

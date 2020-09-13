@@ -1,6 +1,14 @@
 <%= if (current_user.Role == "admin") { %>
 <h1>USUARIOS</h1>
-<a href="<%= safeListPath() %>">Safelist</a>
+<ul>
+    <li>
+        <a href="<%= safeListPath() %>">Safelist</a>
+    </li>
+    <li>
+        <a href="<%= controlPanelPath() %>">Panel de control</a>
+    </li>
+</ul>
+
 <div class="row text-center">
     <div class="col-1">
         Avatar

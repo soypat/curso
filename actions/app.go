@@ -58,6 +58,7 @@ func App() *buffalo.App {
 		//  c.Value("tx").(*pop.Connection)
 		// Remove to disable this.
 		app.Use(popmw.Transaction(models.DB))
+
 		// Setup and use translations:
 		app.Use(translations())
 		// -- Authorization/Security procedures --
@@ -94,11 +95,11 @@ func App() *buffalo.App {
 		curso.GET("/eval/e/{evalid}/edit", CursoEvaluationEditGet).Name("evaluationEditGet")
 		curso.POST("/eval/e/{evalid}/edit", CursoEvaluationEditPost)
 		curso.GET("/eval/e/{evalid}/delete", CursoEvaluationDelete).Name("evaluationDelete")
-
+		curso.Use(models.BBoltTransaction(models.BDB))
 
 		interpreter := app.Group("/py")
 		interpreter.POST("/", InterpretPost).Name("Interpret")
-
+		interpreter.Use(models.BBoltTransaction(models.BDB))
 		// Actual forum stuiff
 		forum := app.Group("/f/{forum_title}")
 		forum.GET("/c", NotFound)
@@ -139,6 +140,7 @@ func App() *buffalo.App {
 		admin := app.Group("/admin")
 		admin.Use(SiteStruct)
 		admin.Use(AdminAuth,SafeList)
+		admin.Use(models.BBoltTransaction(models.BDB))
 		admin.GET("/f", manageForum)
 		admin.GET("newforum", createForum)
 		admin.POST("newforum/post", createForumPost)
@@ -150,12 +152,13 @@ func App() *buffalo.App {
 
 		admin.GET("safelist",SafeListGet).Name("safeList")
 		admin.POST("safelist",SafeListPost)
-		admin.GET("/cbu", pyDBBackup).Name("cursoCodeBackup")
+		admin.GET("/cbu", boltDBDownload(models.BDB)).Name("cursoCodeBackup")
 		admin.GET("/cbureader", zipAssetFolder("uploadReader")).Name("cursoCodeBackupReader")
-
+		admin.GET("/control-panel",ControlPanel).Name("controlPanel")
+		admin.POST("/cbuDelete", DeletePythonUploads).Name("cursoCodeDelete")
 		// We associate the HTTP 404 status to a specific handler.
 		// All the other status code will still use the default handler provided by Buffalo.
-		app.ErrorHandlers[404] = err404
+		//app.ErrorHandlers[404] = err404
 		//app.ErrorHandlers[500] = err500
 
 		app.ServeFiles("/", assetsBox) // serve files from the public directory

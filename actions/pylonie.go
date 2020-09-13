@@ -8,7 +8,6 @@ import (
 	"io"
 	"io/ioutil"
 	"math/big"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -25,17 +24,6 @@ import (
 )
 
 const nullUUID = "00000000-0000-0000-0000-000000000000"
-
-var DB *bbolt.DB
-var DBeval *bbolt.DB
-
-func init() {
-	var err error
-	DB, err = bbolt.Open("tmp/codes.db", 0600, &bbolt.Options{Timeout: 4*time.Second})
-	must(err)
-	DBeval, err = bbolt.Open("tmp/codeseval.db", 0600, &bbolt.Options{Timeout: 4*time.Second})
-	must(err)
-}
 
 // recieve POST request to submit and evaluate code
 func InterpretPost(c buffalo.Context) error {
@@ -54,7 +42,9 @@ func InterpretPost(c buffalo.Context) error {
 	if p.code.Evaluation.String() != nullUUID {
 		return p.interpretEvaluation(c)
 	}
-	defer p.Put(DB, c)
+	btx := c.Value("btx").(*bbolt.Tx)
+
+	defer p.PutTx(btx, c)
 	err := p.runPy()
 	if err != nil {
 		return p.codeResult(c, p.result.Output, err.Error())
@@ -76,7 +66,7 @@ func (p pythonHandler) interpretEvaluation(c buffalo.Context) error {
 	if p.Input == "" || len(p.Input) > 60 || ID.Cmp(&lim) == -1 || !ID.ProbablyPrime(6) {
 		return p.codeResult(c, "", T.Translate(c, "curso-python-input-field-error"))
 	}
-	c.Logger().Info("starting evaluation!")
+
 	tx := c.Value("tx").(*pop.Connection)
 	q := tx.Where("id = ?", p.code.Evaluation)
 	exists, err := q.Exists("evaluations")
@@ -99,7 +89,8 @@ func (p pythonHandler) interpretEvaluation(c buffalo.Context) error {
 		return p.codeResult(c, peval.Output, "Evaluation errored! "+err.Error()) // TODO this is the debug line
 		//return  p.codeResult(c,"","Evaluation errored! "+err.Error()) // TODO this is the production line
 	}
-	defer p.Put(DBeval, c)
+	btx := c.Value("btx").(*bbolt.Tx)
+	defer p.PutTx(btx, c)
 	p.Input = eval.Inputs.String
 	err = p.runPy()
 	if err != nil {
@@ -110,6 +101,30 @@ func (p pythonHandler) interpretEvaluation(c buffalo.Context) error {
 	} else {
 		return p.codeResult(c, "", T.Translate(c, "curso-python-evaluation-fail"))
 	}
+}
+
+func ControlPanel(c buffalo.Context) error {
+	return c.Render(200, r.HTML("curso/control-panel.plush.html"))
+}
+
+// Function to delete all python uploads
+func DeletePythonUploads(c buffalo.Context) error {
+	var auth struct {
+		Key string `form:"authkey"`
+	}
+	if err:=c.Bind(&auth);err!=nil {
+		return c.Error(500,err)
+	}
+	if auth.Key != ".b3060ee10d6305243c7b" {
+		c.Flash().Add("warning","bad key")
+		return c.Redirect(302, "controlPanelPath()")
+	}
+	btx := c.Value("btx").(*bbolt.Tx)
+	if err := btx.DeleteBucket([]byte(pyDBUploadBucketName)); err!=nil {
+		return c.Error(500,err)
+	}
+	c.Flash().Add("success","Uploads deleted. Hope you know what you are doing")
+	return c.Redirect(302,"/")
 }
 
 // adds code result to context response.
@@ -125,7 +140,11 @@ func (p *pythonHandler) codeResult(c buffalo.Context, output ...string) error {
 		p.result.Output = output[0]
 		p.result.Error = output[1]
 	}
+	if len(p.Output) > pyMaxOutputLength {
+		p.Output = p.Output[:pyMaxOutputLength] + " \n" + T.Translate(c, "curso-python-interpreter-output-too-long")
+	}
 	jsonResponse, _ := json.Marshal(p.result)
+	c.Response().WriteHeader(200) // all good status so tx is committed
 	c.Response().Write(jsonResponse)
 	return nil
 }
@@ -133,8 +152,9 @@ func (p *pythonHandler) codeResult(c buffalo.Context, output ...string) error {
 // configuration values
 const (
 	pyCommand          = "python3"
-	dbUploadBucketName = "uploads"
-	pyTimeout_ms       = 2500
+	// this Bucket name must coincide with one defined in init() in models/bbolt.go
+	pyDBUploadBucketName = "pyUploads"
+	pyTimeout_ms         = 300
 	// DB:
 	pyMaxSourceLength = 5000 // DB storage trim length
 	pyMaxOutputLength = 2000 // in characters
@@ -169,6 +189,7 @@ type pythonHandler struct {
 	filename string
 }
 
+// sanitization structures
 var reForbid = map[*regexp.Regexp]string{
 	regexp.MustCompile(`exec|open|write|eval|Write|globals|locals|breakpoint|getattr|memoryview|vars|super`): "forbidden function key '%s'",
 	//regexp.MustCompile(`input\s*\(`):                           "no %s) to parse!",
@@ -176,6 +197,7 @@ var reForbid = map[*regexp.Regexp]string{
 	regexp.MustCompile(`__\w+__`):                              "forbidden dunder function key '%s'",
 }
 
+// special treatment for imports since we may allow special imports such as math, numpy, pandas
 var reImport = regexp.MustCompile(`^from[\s]+[\w]+|import[\s]+[\w]+`)
 
 var allowedImports = map[string]bool{
@@ -286,58 +308,73 @@ func printSafeList() (s string) {
 	return
 }
 
+
+
 // Saves Python code and user to database
-func (p *pythonHandler) Put(db *bbolt.DB, c buffalo.Context) {
-	err := db.Update(func(tx *bbolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte(dbUploadBucketName))
-		if err != nil {
+func (p *pythonHandler) PutTx(tx *bbolt.Tx, c buffalo.Context) {
+	// closure eases error management
+		err := func () error {
+			b, err := tx.CreateBucketIfNotExists([]byte(pyDBUploadBucketName))
+			if err != nil {
+				return err
+			}
+			p.Time = time.Now().String()
+			var pc pythonHandler
+			pc = *p // because we don't want to store 5000000 length outputs
+			if len(pc.Output) > pyMaxOutputLength {
+				pc.Output = pc.Output[:pyMaxOutputLength]
+			}
+			if len(pc.Source) > pyMaxSourceLength {
+				pc.Source = pc.Source[:pyMaxSourceLength]
+			}
+			buff, err := json.Marshal(pc)
+			if err != nil {
+				return err
+			}
+			h := crypto.MD5.New()
+			h.Write([]byte(pc.UserName + pc.code.Source))
+			sum := h.Sum(nil)
+			if b.Get(sum) == nil {
+				c.Logger().Infof("Code submitted user: %s", pc.UserName)
+				return b.Put(h.Sum(nil), buff)
+			}
+			c.Logger().Infof("Repeated code input submitted user: %s", pc.UserName)
+			return nil
+		}()
+
+	if err != nil {
+		c.Logger().Errorf("could not save python code to database for user '%s': %s\n", p.UserName,err.Error())
+	}
+}
+
+
+
+
+
+// download contents of a bbolt.DB
+// in raw database format. Programmed to be
+// fast as heck
+func boltDBDownload(db *bbolt.DB) func(c buffalo.Context) error {
+	return func(c buffalo.Context) error {
+		_, name := filepath.Split(db.Path())
+		w := c.Response()
+		err := db.View(func(tx *bbolt.Tx) error {
+			w.Header().Set("Content-Type", "application/octet-stream")
+			w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, name))
+			w.Header().Set("Content-Length", strconv.Itoa(int(tx.Size())))
+			_, err := tx.WriteTo(w)
 			return err
-		}
-		p.Time = time.Now().String()
-		var pc pythonHandler
-		pc = *p // because we don't want to store 5000000 length outputs
-		if len(pc.Output) > pyMaxOutputLength {
-			pc.Output = pc.Output[:pyMaxOutputLength]
-		}
-		if len(pc.Source) > pyMaxSourceLength {
-			pc.Source = pc.Source[:pyMaxSourceLength]
-		}
-		buff, err := json.Marshal(pc)
+		})
 		if err != nil {
-			return err
+			return c.Error(500, err)
 		}
-		h := crypto.MD5.New()
-		h.Write([]byte(pc.UserName + pc.code.Source))
-		sum := h.Sum(nil)
-		if b.Get(sum) == nil {
-			c.Logger().Infof("Code submitted user: %s", pc.UserName)
-			return b.Put(h.Sum(nil), buff)
-		}
-		c.Logger().Infof("Repeated code input submitted user: %s", pc.UserName)
 		return nil
-	})
-
-	if err != nil {
-		c.Logger().Errorf("could not save python code to database for user '%s'\n", p.UserName)
 	}
 }
 
-// if accessed by registered user with 'admin' role then db containing code is downloaded
-func pyDBBackup(c buffalo.Context) error {
-	w := c.Response()
-	err := DB.View(func(tx *bbolt.Tx) error {
-		w.Header().Set("Content-Type", "application/octet-stream")
-		w.Header().Set("Content-Disposition", `attachment; filename="uploads.db"`)
-		w.Header().Set("Content-Length", strconv.Itoa(int(tx.Size())))
-		_, err := tx.WriteTo(w)
-		return err
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	return nil
-}
-
+// Zips up a folder in relative path /assets and
+// sends content to user requesting. Should be used sparingly
+// for maintenance and admin tasks ideally.
 func zipAssetFolder(path string) func(c buffalo.Context) error {
 	return func(c buffalo.Context) error {
 		jobname := encode([]rune(path), b64safe)
@@ -388,21 +425,6 @@ func zipAssetFolder(path string) func(c buffalo.Context) error {
 	}
 }
 
-func pyDBReaderDownload(c buffalo.Context) error {
-	w := c.Response()
-	f, err := os.Open("assets/files/uploadReader.exe")
-	if err != nil {
-		return c.Redirect(404, "/")
-	}
-	info, _ := f.Stat()
-	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Content-Disposition", `attachment; filename="uploadReader.exe"`)
-	w.Header().Set("Content-Length", strconv.Itoa(int(info.Size())))
-	if _, err := io.Copy(w, f); err != nil {
-		return c.Redirect(500, "/")
-	}
-	return nil
-}
 
 func addFileToZip(zipWriter *zip.Writer, filename string) error {
 

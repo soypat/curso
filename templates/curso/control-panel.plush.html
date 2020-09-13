@@ -1,0 +1,14 @@
+<form class="form-horizontal" action="<%= cursoCodeDeletePath() %>" method="POST" enctype="multipart/form-data">
+    <%= csrf() %>
+    <!-- Text input title-->
+    <fieldset>
+    <div class="form-group">
+        <label class="col-md-4 control-label" for="authkey"> Eliminar base de datos de códigos Python </label>
+        <div class="col-md-4">
+            <input id="title" name="authkey" type="text" placeholder="Por favor preguntar antes de hacer esto."
+                   class="form-control input-md" value="">
+            <span class="help-block"> </span>
+        </div>
+    </div>
+    </fieldset>
+</form>

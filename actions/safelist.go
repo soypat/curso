@@ -3,21 +3,17 @@ package actions
 import (
 	"encoding/json"
 	"errors"
-	"go.etcd.io/bbolt"
-	"strings"
-	"time"
-
 	"github.com/gobuffalo/buffalo"
 	"github.com/soypat/curso/models"
+	"go.etcd.io/bbolt"
+	"strings"
 )
-
-// Bolt Data Base for general usage
-var BDB *bbolt.DB
 
 var (
 	errBucketNotFound = errors.New("did not find " + safeUsersBucketName + " bucket in bolt database")
 )
 
+// name must be first created in models/bbolt.go in init()
 const safeUsersBucketName = "safeUsers"
 
 type safeUser struct {
@@ -25,6 +21,7 @@ type safeUser struct {
 	Email string `json:"email" gob:"email"`
 	Responsible string `json:"responsible" gob:"resp"`
 }
+
 type safeUsers []safeUser
 
 func (s safeUsers) String() (out string) {
@@ -34,20 +31,11 @@ func (s safeUsers) String() (out string) {
 	return
 }
 
-func init() {
-	var err error
-	BDB, err = bbolt.Open("tmp/safelist.db", 0600, &bbolt.Options{Timeout: time.Second})
-	must(err)
-	must(BDB.Update(func(tx *bbolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte(safeUsersBucketName))
-		return err
-	}))
-}
-
 func SafeListGet(c buffalo.Context) error {
 	var users safeUsers
-	err := BDB.View(func(tx *bbolt.Tx) error {
-		b := tx.Bucket([]byte(safeUsersBucketName))
+	btx := c.Value("btx").(*bbolt.Tx)
+	err := func() error {
+		b := btx.Bucket([]byte(safeUsersBucketName))
 		if b == nil {
 			return errBucketNotFound
 		}
@@ -60,7 +48,8 @@ func SafeListGet(c buffalo.Context) error {
 			users = append(users, user)
 			return nil
 		})
-	})
+	}()
+
 	if err != nil {
 		return c.Error(500, err)
 	}
@@ -79,8 +68,9 @@ func SafeListPost(c buffalo.Context) error {
 		return c.Error(500,err)
 	}
 	users := safeFormToSafeList(form)
-	err := BDB.Update(func(tx *bbolt.Tx) error {
-		b := tx.Bucket([]byte(safeUsersBucketName))
+	btx := c.Value("btx").(*bbolt.Tx)
+	err := func() error {
+		b := btx.Bucket([]byte(safeUsersBucketName))
 		if b == nil {
 			return errBucketNotFound
 		}
@@ -96,14 +86,12 @@ func SafeListPost(c buffalo.Context) error {
 			}
 		}
 		return nil
-	})
+	}()
 	if err != nil {
 		return c.Error(500,err)
 	}
-	//c.Set("safe_users",users)
 	c.Flash().Add("success","Safelist updated successfully.")
 	return c.Redirect(302,"allUsersPath()")
-	//return c.Render(200, r.HTML("users/safelist.plush.html"))
 }
 
 type void struct{}
@@ -125,7 +113,8 @@ func SafeList(next buffalo.Handler) buffalo.Handler {
 			return next(c)
 		}
 		var exists bool
-		err := BDB.View(func(tx *bbolt.Tx) error {
+		btx := c.Value("btx").(*bbolt.Tx)
+		err := btx.DB().View(func(tx *bbolt.Tx) error {
 			b := tx.Bucket([]byte(safeUsersBucketName))
 			if b == nil {
 				return errBucketNotFound

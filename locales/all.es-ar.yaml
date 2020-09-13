@@ -252,9 +252,11 @@
 - id: curso-python-interpreter-only-members
   translation: "Interpretador solo disponible para usuarios registrados"
 - id: curso-python-interpreter-title
-  translation: "Python 3"
+  translation: " "
 - id: curso-python-interpreter-run
   translation: " "
+- id: curso-python-interpreter-output-too-long
+  translation: "Se recortó la salida por ser muy larga"
 - id: curso-python-interpreter-placeholder
   translation: | # "print(\"Hola mundo\")"
     print("Hola mundo")

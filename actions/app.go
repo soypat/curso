@@ -2,17 +2,17 @@ package actions
 
 import (
 	"github.com/gobuffalo/buffalo"
-	"github.com/gobuffalo/envy"
-	forcessl "github.com/gobuffalo/mw-forcessl"
-	paramlogger "github.com/gobuffalo/mw-paramlogger"
-	"github.com/markbates/goth/gothic"
-	"github.com/unrolled/secure"
-
 	"github.com/gobuffalo/buffalo-pop/v2/pop/popmw"
+	"github.com/gobuffalo/envy"
+	"github.com/gobuffalo/logger"
 	csrf "github.com/gobuffalo/mw-csrf"
+	forcessl "github.com/gobuffalo/mw-forcessl"
 	i18n "github.com/gobuffalo/mw-i18n"
+	paramlogger "github.com/gobuffalo/mw-paramlogger"
 	"github.com/gobuffalo/packr/v2"
+	"github.com/markbates/goth/gothic"
 	"github.com/soypat/curso/models"
+	"github.com/unrolled/secure"
 )
 
 // ENV is used to help switch settings based on where the
@@ -42,6 +42,7 @@ func App() *buffalo.App {
 		app = buffalo.New(buffalo.Options{
 			Env:         ENV,
 			SessionName: "_curso_session",
+			LogLvl: logger.InfoLevel,
 		})
 
 		// Automatically redirect to SSL. Only works if you have a proxy up and running such as NGINX

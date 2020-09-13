@@ -4,23 +4,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
     <title>Foros ITBA</title>
+    <link rel="icon"  href="<%= assetPath("images/logo-curso32x32.png") %>">
     <%= stylesheetTag("application.css") %>
-    <script src="https://code.jquery.com/jquery.js"></script>
-    <!-- font awesome icons. Available: https://fontawesome.com/v3.2.1/icons/ -->
-   <!-- <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"> -->
+    <!-- security against cross site reference attacks -->
     <meta name="csrf-param" content="authenticity_token"/>
     <meta name="csrf-token" content="<%= authenticity_token %>"/>
-    <link rel="icon"  href="<%= assetPath("images/logo-curso32x32.png") %>">
-    <!--MATH JAX-->
-    <script id="MathJax-script" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <link rel="stylesheet" href="https://www.jqueryscript.net/css/jquerysctipttop.css">
     <!-- JQUERY LINED TEXTAREA -->
     <link rel="stylesheet" href="<%= assetPath("css/jquery-linedtextarea.css") %>">
-    <link rel="stylesheet" href="https://www.jqueryscript.net/css/jquerysctipttop.css">
-    <!-- HIGHLIGHT.JS -->
+    <!--MATH JAX-->
+    <script id="MathJax-script" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- HIGHLIGHT.JS - an empty string defaults codeTheme -->
     <%= if (current_user) { %>
         <%= codeTheme(current_user.Theme) %>
     <% } else { %>
-        <%= codeTheme("default") %>
+        <%= codeTheme("") %>
     <% } %>
     <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/highlight.min.js"></script>
     <script>

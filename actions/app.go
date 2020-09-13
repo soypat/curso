@@ -44,8 +44,10 @@ func App() *buffalo.App {
 			SessionName: "_curso_session",
 		})
 
-		// Automatically redirect to SSL
-		app.Use(forceSSL())
+		// Automatically redirect to SSL. Only works if you have a proxy up and running such as NGINX
+		// NGINX can be configured to do this for you so it's kind of useless. It also fucks up
+		// google chrome's default redirection if you don't have the proxy on... dont use it
+		//app.Use(forceSSL())
 
 		// Log request parameters (filters apply).
 		app.Use(paramlogger.ParameterLogger)
@@ -58,7 +60,7 @@ func App() *buffalo.App {
 		//  c.Value("tx").(*pop.Connection)
 		// Remove to disable this.
 		app.Use(popmw.Transaction(models.DB))
-
+		app.Use(models.BBoltTransaction(models.BDB))
 		// Setup and use translations:
 		app.Use(translations())
 		// -- Authorization/Security procedures --
@@ -84,7 +86,6 @@ func App() *buffalo.App {
 		app.GET("/", manageForum) //TODO change homepage
 		app.Middleware.Skip(SafeList,manageForum)
 		app.Middleware.Skip(Authorize,manageForum)
-		app.GET("/f", NotFound)
 
 		// All things curso de python
 		curso := app.Group("/curso-python")
@@ -95,20 +96,19 @@ func App() *buffalo.App {
 		curso.GET("/eval/e/{evalid}/edit", CursoEvaluationEditGet).Name("evaluationEditGet")
 		curso.POST("/eval/e/{evalid}/edit", CursoEvaluationEditPost)
 		curso.GET("/eval/e/{evalid}/delete", CursoEvaluationDelete).Name("evaluationDelete")
-		curso.Use(models.BBoltTransaction(models.BDB))
+
 
 		interpreter := app.Group("/py")
 		interpreter.POST("/", InterpretPost).Name("Interpret")
-		interpreter.Use(models.BBoltTransaction(models.BDB))
+
 		// Actual forum stuiff
 		forum := app.Group("/f/{forum_title}")
-		forum.GET("/c", NotFound)
 		forum.Use(SetCurrentForum)
 		forum.GET("/", forumIndex).Name("forum")
 		forum.GET("/create", CategoriesCreateGet).Name("catCreate")
 		forum.POST("/create", CategoriesCreatePost)
-		forum.Middleware.Skip(Authorize,forumIndex,NotFound)
-		forum.Middleware.Skip(SafeList,forumIndex,NotFound)
+		forum.Middleware.Skip(Authorize,forumIndex)
+		forum.Middleware.Skip(SafeList,forumIndex)
 
 		catGroup := forum.Group("/c/{cat_title}")
 		catGroup.Use(SetCurrentCategory)
@@ -140,7 +140,6 @@ func App() *buffalo.App {
 		admin := app.Group("/admin")
 		admin.Use(SiteStruct)
 		admin.Use(AdminAuth,SafeList)
-		admin.Use(models.BBoltTransaction(models.BDB))
 		admin.GET("/f", manageForum)
 		admin.GET("newforum", createForum)
 		admin.POST("newforum/post", createForumPost)
@@ -158,9 +157,10 @@ func App() *buffalo.App {
 		admin.POST("/cbuDelete", DeletePythonUploads).Name("cursoCodeDelete")
 		// We associate the HTTP 404 status to a specific handler.
 		// All the other status code will still use the default handler provided by Buffalo.
-		//app.ErrorHandlers[404] = err404
-		//app.ErrorHandlers[500] = err500
-
+		if ENV == "production" {
+			app.ErrorHandlers[404] = err404
+			app.ErrorHandlers[500] = err500
+		}
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 	return app
@@ -190,10 +190,6 @@ func forceSSL() buffalo.MiddlewareFunc {
 	})
 }
 
-func NotFound(c buffalo.Context) error {
-	return c.Render(404, r.HTML("meta/404.plush.html"))
-}
-
 // Call to must panics if err != nil
 func must(err error) {
 	if err != nil {
@@ -202,18 +198,17 @@ func must(err error) {
 }
 
 func err500(status int, err error, c buffalo.Context) error {
+	u,ok:=c.Value("current_user").(*models.User)
+	if !ok || u == nil || u.Role != "admin"{
+		return c.Render(500,r.HTML("meta/500.plush.html"))
+	}
 	c.Flash().Add("danger","Internal server error (500): "+err.Error()) // T.Translate(c,"app-status-internal-error")
-	return c.Redirect(302,"/")
+	return c.Render(500,r.HTML("meta/500.plush.html"))
 }
 
-func terr404(status int, err error, c buffalo.Context) error {
-	c.Set("T", T) // This will set T for the Translate function.
-	translation := T.Translate(c,"app-not-found")
-	c.Flash().Add("warning",translation)
-	return c.Redirect(302,"/")
-}
+
 
 func err404(status int, err error, c buffalo.Context) error {
 	c.Flash().Add("warning", "Page not found (404)") // T.Translate(c,"app-not-found")
-	return c.Redirect(302,"/")
+	return c.Render(404, r.HTML("meta/404.plush.html"))//c.Redirect(302,"/")
 }

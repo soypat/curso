@@ -1,7 +1,7 @@
 <% let ctx = {forum_title:forum.Title, cat_title:category.Title,tid:topic.ID, rid: reply.ID} %>
 
-<div class="row col-12">
-    <div class="card border-secondary mb-2 mt-1" style="width:100%;">
+<div class="row col-md-9 col-sm-12">
+    <div class="card border-secondary mt-2 mt-lg-4" style="width:100%;">
         <div class="card-header bg-dark text-white">
             <%=avatar(reply.Author)%> <%= displayName(reply.Author) %>
             <span class="float-right"> <%= timeSince(reply.UpdatedAt) %></span>

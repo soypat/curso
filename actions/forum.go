@@ -26,7 +26,7 @@ func SetCurrentForum(next buffalo.Handler) buffalo.Handler {
 		err := q.First(forum)
 		if err != nil {
 			c.Flash().Add("danger", "Error while seeking forum")
-			return c.Redirect(404, "/")
+			return c.Error(404,err)
 		}
 		c.Set("inForum", true)
 		c.Set("forum", forum)

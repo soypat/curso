@@ -114,6 +114,8 @@
   translation: "Última actividad: "
 - id: topic-replies
   translation: "Comentarios: "
+
+
 # CATEGORY
 - id: category-category
   translation: "Categoría"
@@ -222,6 +224,18 @@
   translation: "de"
 - id: description
   translation: "Descripción"
+# Mail server
+- id: description
+  translation: "Descripción"
+- id: description
+  translation: "Descripción"
+- id: description
+  translation: "Descripción"
+- id: description
+  translation: "Descripción"
+- id: description
+  translation: "Descripción"
+
 
 # CURSO PYTHON
 - id: curso-python-evaluator

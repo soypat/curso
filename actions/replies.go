@@ -4,7 +4,9 @@ import (
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/render"
 	"github.com/gobuffalo/pop/v5"
+	"github.com/gofrs/uuid"
 	"github.com/pkg/errors"
+	"github.com/soypat/curso/mailers"
 	"github.com/soypat/curso/models"
 )
 
@@ -42,12 +44,12 @@ func ReplyPost(c buffalo.Context) error {
 		c.Set("errors", verrs.Errors)
 		return c.Render(422, r.HTML("replies/create"))
 	}
-	c.Flash().Add("success", T.Translate(c, "reply-create-success"))
-
+	// mail not yet implemented https://myaccount.google.com/lesssecureapps
 	//err = newReplyNotify(c, topic, reply)
 	//if err != nil {
 	//	return errors.WithStack(err)
 	//}
+	c.Flash().Add("success", T.Translate(c, "reply-create-success"))
 	f := c.Value("forum").(*models.Forum)
 	return c.Redirect(302, "topicGetPath()", render.Data{"forum_title": f.Title, "cat_title": c.Param("cat_title"),
 		"tid": topic.ID})
@@ -81,7 +83,7 @@ func SetCurrentReply(next buffalo.Handler) buffalo.Handler {
 		reply, err := loadReply(c, c.Param("rid"))
 		if err != nil {
 			c.Flash().Add("danger", T.Translate(c, "topic-not-found"))
-			return c.Render(404, r.HTML("meta/404.plush.html"))
+			return c.Error(404,err)
 		}
 		c.Logger().Infof("Reply got %s", reply)
 		c.Set("reply", reply)
@@ -132,4 +134,42 @@ func loadReply(c buffalo.Context, id string) (*models.Reply, error) {
 	reply.Topic = topic
 	reply.Author = usr
 	return reply, nil
+}
+
+// mailer functionality
+func newReplyNotify(c buffalo.Context, topic *models.Topic, reply *models.Reply) error {
+	set := make(map[uuid.UUID]struct{})
+	for _, usr := range topic.Subscribers {
+		set[usr] = struct{}{}
+	}
+	set[reply.AuthorID] = struct{}{}
+
+	cat := new(models.Category)
+	tx := c.Value("tx").(*pop.Connection)
+	if err := tx.Find(cat, topic.CategoryID); err != nil {
+		return errors.WithStack(err)
+	}
+	for _, usr := range cat.Subscribers {
+		set[usr] = struct{}{}
+	}
+
+	users := new(models.Users)
+	if err := tx.All(users); err != nil {
+		return errors.WithStack(err)
+	}
+
+	var recpts []models.User
+	for _, usr := range *users {
+		if _, ok := set[usr.ID]; !ok {
+			continue
+		}
+		recpts = append(recpts, usr)
+	}
+
+	err := mailers.NewReplyNotify(c, topic, reply, recpts)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return nil
 }

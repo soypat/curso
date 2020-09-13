@@ -1,14 +1,12 @@
+// This document contains general javascript for generic app usage.
+// Curso-Python 2020
 require("expose-loader?$!expose-loader?jQuery!jquery");
 require("bootstrap/dist/js/bootstrap.bundle.js");
-// require("@fortawesome/fontawesome-free/js/all.js");
-// require("popper.js/dist/popper.min.js");
-// require("bootstrap/dist/js/bootstrap.min.js");
 
-
-// function executes upon loading all of DOM
-
+// Runs when DOM is partially loaded (html elements ready... i think)
 $(() => {
-    // window.onload = function() {
+    // hldivs.forEach adds the hljs class attribute in the pre element and
+    // removes the hljs class where it breaks (div)
     let hldivs = document.querySelectorAll("div.highlight")
     hldivs.forEach(function (div) {
         let hyphIdx = div.className.indexOf("highlight-");
@@ -21,6 +19,7 @@ $(() => {
         pre.setAttribute("class","hljs "+langName)
         div.setAttribute("class","")//"hljs highlight "+langName) // erase autodetected lang
     })
+    // if the language attribute is not set we set the default to python
     document.querySelectorAll('code').forEach((block) => {
         let attr = block.getAttribute("class")
         if (!block.hasAttribute("class") || attr === "highlight" || attr === "col-md-7") {
@@ -31,11 +30,12 @@ $(() => {
 });
 
 RENDERERS.push(renderCodeBlock)
+// Add the code-block highlight.js renderer to
+// the queue.
 function renderCodeBlock() {
     document.querySelectorAll('code , .highlight, .hljs').forEach((block) => {
         hljs.highlightBlock(block);
     });
-
 }
 
 RENDERERS.push(readyJSCodeBlock)
@@ -55,7 +55,7 @@ function readyJSCodeBlock() {
     })
 }
 
-// Use tabs in content/markdowny textareas
+// Use tabs in content/markdowny textareas.
 $(document).delegate('#content', 'keydown', function (e) {
     var keyCode = e.keyCode || e.which;
     if (keyCode == 9) {

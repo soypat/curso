@@ -66,7 +66,6 @@ func TopicCreatePost(c buffalo.Context) error {
 	c.Logger().Info("TopicCreatePost finished success")
 	c.Flash().Add("success", T.Translate(c, "topic-add-success"))
 	return c.Redirect(302, "catPath()", render.Data{"forum_title": f.Title, "cat_title": cat.Title})
-	//return c.Render(200,r.HTML("topics/create.plush.html"))
 }
 
 func TopicEditGet(c buffalo.Context) error {
@@ -94,7 +93,7 @@ func SetCurrentTopic(next buffalo.Handler) buffalo.Handler {
 		topic, err := loadTopic(c, c.Param("tid"))
 		if err != nil {
 			c.Flash().Add("danger", T.Translate(c, "topic-not-found"))
-			return c.Render(404, r.HTML("meta/404.plush.html"))
+			return c.Error(404,err)
 		}
 		c.Set("topic", topic)
 		return next(c)

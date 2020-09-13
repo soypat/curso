@@ -110,7 +110,10 @@
   translation: "Título de foro debería consistir de caracteres alfanuméricos y '-', '_'"
 - id: topic-delete-popup
   translation: "Eliminar tema {{.title}} ?"
-
+- id: topic-last-activity
+  translation: "Última actividad: "
+- id: topic-replies
+  translation: "Comentarios: "
 # CATEGORY
 - id: category-category
   translation: "Categoría"

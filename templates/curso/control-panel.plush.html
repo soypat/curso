@@ -1,9 +1,12 @@
-<form class="form-horizontal" action="<%= cursoCodeDeletePath() %>" method="POST" enctype="multipart/form-data">
+<form class="form-horizontal card border-danger" action="<%= cursoCodeDeletePath() %>" method="POST" enctype="multipart/form-data">
+    <div class="card-header bg-danger text-white">
+        Eliminar base de datos de códigos Python
+    </div>
     <%= csrf() %>
     <!-- Text input title-->
     <fieldset>
-    <div class="form-group">
-        <label class="col-md-4 control-label" for="authkey"> Eliminar base de datos de códigos Python </label>
+    <div class="form-group card-body">
+        <label class="col-md-4 control-label" for="authkey"> Ingrese código </label>
         <div class="col-md-4">
             <input id="title" name="authkey" type="text" placeholder="Por favor preguntar antes de hacer esto."
                    class="form-control input-md" value="">

@@ -17,37 +17,33 @@
         <%= partial("pagination-perpage.plush.html", {plural: downcase(t("app-topics")), perPage: [10,15,25]}) %>
     </div>
 </div>
-<div class="row">
-    <div class="font-weight-bold col-5"><%= t("category-topic") %></div>
-    <div class="font-weight-bold col-3 text-center"><%= t("category-users") %></div>
-    <div class="font-weight-bold col-2 text-center"><%= t("category-replies") %></div>
-    <div class="font-weight-bold col-2 text-center"><%= t("category-activity") %></div>
-</div>
 
 <%= if (len(topics) == 0)  {%>
     <h4><%= t("category-no-topics-found") %></h4>
 <% } %>
 <%= for (topic) in topics{
  let ctxTopic= {cat_title: category.Title, forum_title: forum.Title, tid: topic.ID}%>
-<div class="row">
+
     <%= if (!topic.Deleted) { %>
-    <hr class="col-12 col-sm-12" id="<%= topic.ID %>">
-    <div class="col-5">
-        <a href="<%= topicGetPath( ctxTopic ) %>" class="text-secondary">
+<div class="card mb-1 rounded-0" id="<%= topic.ID %>">
+    <a href="<%= topicGetPath( ctxTopic ) %>">
+    <div class="card-header bg-secondary text-white rounded-0">
             <%= topic.Title %>
-        </a>
-    </div>
-    <div class="col-3 text-center">
         <%= for (author) in topic.Authors() { %>
-        <span class="text-secondary">
+        <span class="float-right">
 			<%= avatar(derefUser(author)) %>
 		</span>
         <% } %>
     </div>
-    <div class="col-2 text-center"><%= len(topic.Replies) %></div>
-    <div class="col-2 text-center"><%= timeSince(topic.LastUpdate())  %></div>
-    <% } %>
+    </a>
+
+    <div class="card-footer text-secondary">
+        <div class="float-left"><%= t("topic-replies") %> <%= len(topic.Replies) %></div>
+        <div class="float-right"><%= t("topic-last-activity") %> <%= timeSince(topic.LastUpdate())  %></div>
+    </div>
+
 </div>
+    <% } %>
 <% } %>
 
 <hr class="col-md-12 col-sm-12">

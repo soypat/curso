@@ -13,8 +13,8 @@ import (
 // throughout your application.
 var DB *pop.Connection
 
-// BDB is a transaction in the simple bbolt database
-// for fullfilling database needs when a full blown
+// BDB is a transaction in the simple BBolt database
+// for fulfilling database needs when a full blown
 // SQL server is not required
 var BDB *bbolt.DB
 

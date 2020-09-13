@@ -64,7 +64,12 @@ func joinPath(sli ...string) string {
 	return strings.Join(sli, "/") + "/"
 }
 
-func displayName(user *models.User) string {
+func displayName(u interface{}) string {
+	user, ok := u.(*models.User)
+	if !ok {
+		userCopy := u.(models.User)
+		user = &userCopy
+	}
 	if user.Nick != "" {
 		return user.Nick
 	}

@@ -1,23 +1,24 @@
 <% let ctx = {forum_title:forum.Title, cat_title:category.Title,tid:topic.ID, rid: reply.ID} %>
-<hr class="col-md-10 ml-2" id="<%= reply.ID %>">
 
-<div class="row">
-    <div class="col-md-8 offset-md-1">
-        <%= markdown(reply.Content) %>
-    </div>
-    <div class="col-md-2 offset-md-8 text-right">
-        <%= if  ( current_user.IsAuthor(reply.AuthorID) || current_user.Role == "admin" ) { %>
-        <button type="button" class="btn btn-danger btn-sm m-0" data-toggle="modal" data-target="#reply-modal-<%= reply.ID %>">
-            <%= icon("trash-fill",1,1) %>
-        </button>
-        <a href="<%= replyEditPath(ctx) %>" class="btn btn-secondary btn-sm m-0">
-            <%= icon("blockquote-right",1,1) %>
-        </a>
-        <% } %>
-    </div>
-    <div class="row col-md-4 offset-md-5 text-left" style="font-size: 10pt">
-        <a class="col-md-10" ><%=avatar(reply.Author)%> <%= displayName(reply.Author) %></a>
-        <div class="col-md-2 text-right"><%= timeSince(reply.UpdatedAt) %> </div>
+<div class="row col-12">
+    <div class="card border-secondary mb-2 mt-1" style="width:100%;">
+        <div class="card-header bg-dark text-white">
+            <%=avatar(reply.Author)%> <%= displayName(reply.Author) %>
+            <span class="float-right"> <%= timeSince(reply.UpdatedAt) %></span>
+        </div>
+        <div class="card-body">
+            <%= markdown(reply.Content) %>
+            <div class="col-md-2 offset-md-8 text-right">
+                <%= if  ( current_user.IsAuthor(reply.AuthorID) || current_user.Role == "admin" ) { %>
+                <button type="button" class="btn btn-danger btn-sm m-0" data-toggle="modal" data-target="#reply-modal-<%= reply.ID %>">
+                    <%= icon("trash-fill",1,1) %>
+                </button>
+                <a href="<%= replyEditPath(ctx) %>" class="btn btn-secondary btn-sm m-0">
+                    <%= icon("blockquote-right",1,1) %>
+                </a>
+                <% } %>
+            </div>
+        </div>
     </div>
 </div>
 

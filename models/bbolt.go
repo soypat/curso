@@ -1,5 +1,5 @@
 // This is not an SQL models file. This contains
-// the middleware for a bbolt database, which is
+// the middleware for a BBolt database, which is
 // a simple key/value store when a full blown
 // SQL server is not needed.
 //
@@ -17,13 +17,20 @@ import (
 var errNonSuccess = errors.New("non success status code")
 
 // BBoltTransaction is a piece of Buffalo middleware that wraps each
-// request in a bboltDB transaction. The transaction will automatically get
+// request in a BBoltDB transaction. The transaction will automatically get
 // committed if there's no errors and the response status code is a
 // 2xx or 3xx, otherwise it'll be rolled back. It will also add a
 // field to the log, "bdb", that shows the total duration spent during
-// the request making database calls.
+// the request writing + spilling + re-balancing.
 // This function is nearly an identical copy of pop's Transaction()
-// just adapted to bbolt
+// just adapted to BBolt. Databases should be defined/initialized in models/models.go
+// One important thing to not is that a writable transaction locks the database
+// to other writable transaction, which means only one transaction will be processed
+// if there are multiple goroutines waiting to read/write as only ONE read/write tx
+// can exist at a time. This may also not scale well if there
+// are many random write operations happening in a single transaction.
+// BBolt is more adept at small operations.
+// see https://github.com/boltdb/bolt#caveats--limitations for more information.
 func BBoltTransaction(db *bbolt.DB) buffalo.MiddlewareFunc {
 	return func(h buffalo.Handler) buffalo.Handler {
 		return func(c buffalo.Context) error {

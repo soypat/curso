@@ -4,10 +4,8 @@ go 1.14
 
 require (
 	github.com/gobuffalo/buffalo v0.16.14
-	github.com/gobuffalo/buffalo-heroku v1.0.9 // indirect
 	github.com/gobuffalo/buffalo-pop/v2 v2.2.0
 	github.com/gobuffalo/envy v1.9.0
-	github.com/gobuffalo/events v1.4.1
 	github.com/gobuffalo/flect v0.2.2
 	github.com/gobuffalo/logger v1.0.3
 	github.com/gobuffalo/mw-csrf v1.0.0

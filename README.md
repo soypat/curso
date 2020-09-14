@@ -44,14 +44,27 @@ the end of this document)
 
 6. Create your database according to [`database.yml`](./database.yml) config file. The following section explains how to do that, for now I'll assume you have a SQL database up and running according to `database.yml`.
 
-7. Run `buffalo dev` in the project directory. Wait a couple seconds for the following lines to show up
+7. Setup the environment.
+    ```bash
+    # Required for OAuth2 (Default uses google as provider)
+    GGL_SECRET_FORUM=xxxxxxxxx # This is google's secret API token (client secret)
+    GGL_KEY_FORUM=1113333333-xXxXxXXX  # This is google's client ID
+    
+    # Optional
+    HOST=https://my.site.com  # If hosting on non-local address this is required for proper callback function
+    PORT=3000 #Default
+    ADDR=127.0.0.1 # Default
+    ```
+
+8. Run `buffalo dev` in the project directory. Wait a couple seconds for the following lines to show up
 
 	```log
 	INFO[2020-09-12T16:48:58-03:00] Starting application at http://127.0.0.1:3000
 	INFO[2020-09-12T16:48:58-03:00] Starting Simple Background Worker
 	```
 
-8. Enjoy your forum at [127.0.0.1:3000](http://127.0.0.1:3000/)
+9. Enjoy your forum at [127.0.0.1:3000](http://127.0.0.1:3000/).
+To add an admin login to the site and see section on [accessing the database](#access-the-database)
 
 Buffalo ships with the `dev` command that will watch your application and automatically rebuild the Go binary and any assets for you. That's useful when developing.
 
@@ -88,6 +101,29 @@ $> buffalo pop create -a
 ```
 
 You can run `buffalo pop migrate` to initialize the forum and the content of its database:
+### Access the database
+So you probably have the server up and running but have no forum to post 
+in and are unable to create forums! What a conundrum. To create a forum you need to be
+an admin. To do this you first must login to the site. After that access the site through
+docker:
+```bash
+docker exec -it forum psql -U pato -W curso
+```
+where `forum` is the image name, `pato` is the user for the `-U` flag, 
+and `curso` is the name of the database. These last two are `postgres` by default
+if not explicitly set.
+
+Now you are in the SQL console run `FROM users SELECT *;` (caps are not necessary) 
+to verify everything is in working condition. You should see your
+user show up. Now you can run the update command to admin yourself:
+```sql
+UPDATE users 
+SET role='admin'
+WHERE email='patty.w@crazymail.gov.zm';
+```
+Remember the trailing semicolon to execute the query. 
+`UPDATE 1` should print to console showing the query was successful.
+Now refresh the page and see if it works!
 
 ### Windows Front-end packages
 1. Install scoop! minimalistic package manager

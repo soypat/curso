@@ -1,6 +1,7 @@
 # Setup
 setup.bat
 # buffalo
+assets/logs/curso.log
 vendor/
 **/*.log
 **/*.sqlite

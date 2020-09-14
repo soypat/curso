@@ -183,6 +183,7 @@ type result struct {
 type pythonHandler struct {
 	result
 	code
+	timecode time.Time
 	Time     string `json:"time"`
 	UserName string `json:"user"`
 	userID   string
@@ -197,7 +198,7 @@ var reForbid = map[*regexp.Regexp]string{
 	regexp.MustCompile(`__\w+__`):                              "forbidden dunder function key '%s'",
 }
 
-// special treatment for imports since we may allow special imports such as math, numpy, pandas
+// special treatment cursofor imports since we may allow special imports such as math, numpy, pandas
 var reImport = regexp.MustCompile(`^from[\s]+[\w]+|import[\s]+[\w]+`)
 
 var allowedImports = map[string]bool{

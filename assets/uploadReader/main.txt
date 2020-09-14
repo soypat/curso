@@ -3,27 +3,26 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/etcd-io/bbolt"
+	"github.com/gofrs/uuid"
 	"html/template"
 	"io/ioutil"
 	"os"
 	"sort"
 	"strings"
 	"time"
-
-	"github.com/etcd-io/bbolt"
-	"github.com/gofrs/uuid"
 )
 
 func main() {
 	db, _ := bbolt.Open("uploads.db", 0600, nil)
 	var codes []pythonHandler
 	err := db.View(func(tx *bbolt.Tx) error {
-		b := tx.Bucket([]byte("uploads"))
+		b := tx.Bucket([]byte("pyUploads"))
 		err := b.ForEach(func(k, v []byte) error {
 			p := pythonHandler{}
 			err := json.Unmarshal(v, &p)
 			p.Time = strings.Split(p.Time, " m=")[0] // gets rid of monotonic clock reading
-			p.timecode, err = time.Parse(tform, p.Time)
+			p.timeCode, err = time.Parse(tform, p.Time)
 			codes = append(codes, p)
 			return err
 		})
@@ -36,7 +35,7 @@ func main() {
 		return
 	}
 	fj, _ := os.Create("out.json")
-	j, _ := json.MarshalIndent(codes, " ", "\t")
+	j, _ := json.MarshalIndent(codes," ","\t")
 	fj.Write(j)
 	fj.Close()
 	f, err := os.Open("tpl.html")
@@ -61,33 +60,33 @@ func main() {
 }
 
 var tform = "2006-01-02 15:04:05.999999999 -0700 MST"
-
 //var dateString = "2018-10-15 15:42:37.5989253 +1100 AEDT m=+3610.688917401" // as is recieved by go
 // sort interface
 type ByTime []pythonHandler
 
 func (t ByTime) Len() int           { return len(t) }
 func (t ByTime) Swap(i, j int)      { t[i], t[j] = t[j], t[i] }
-func (t ByTime) Less(i, j int) bool { return t[i].timecode.Before(t[j].timecode) }
+func (t ByTime) Less(i, j int) bool { return t[i].timeCode.Before(t[j].timeCode) }
 
 type pythonHandler struct {
 	code
 	result
 	Time     string `json:"time"`
-	timecode time.Time
+	timeCode time.Time
 	UserName string `json:"user"`
 	userID   string
 	filename string
 }
 type code struct {
-	Source     string    `json:"code" form:"code"`
-	Input      string    `json:"input" form:"input"`
+	Source string `json:"code" form:"code"`
+	Input string `json:"input" form:"input"`
 	Evaluation uuid.UUID `json:"evalid" form:"evalid"`
 }
 
 type result struct {
-	Output string `json:"output"`
-	Error  string `json:"error"`
+	Output  string        `json:"output"`
+	Error   string        `json:"error"`
+	Elapsed time.Duration `json:"elapsed"`
 }
 
 const tpl = `<!DOCTYPE html>

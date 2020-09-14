@@ -9,7 +9,7 @@ let status = "new"
             status = "edit"
         }
 %>
-<%= partial("md.plush.html",{id_in: "content" ,id_out: "preview"}) %>
+
 <div class="row mt-3 justify-content-center">
     <div class="col-md-12 col-sm-10" >
         <h2><%= t(status+"-topic-headline") %></h2>
@@ -43,10 +43,9 @@ let status = "new"
         </fieldset>
         </form>
 
-        <label><strong><%= t("new-topic-preview") %></strong></label>
-        <div  id="preview">
+        <!-- This is the preview (vista previa of markdown/mathjax/hljs content) -->
+        <%= partial("md.plush.html",{id_in: "content" ,id_out: "preview", title: t("new-topic-preview")}) %>
 
-        </div>
 
     </div>
 </div>

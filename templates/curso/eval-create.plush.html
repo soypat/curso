@@ -85,11 +85,12 @@
 
     </div>
 </div>
-<%= partial("md.plush.html",{id_in: "content" ,id_out: "preview"}) %>
-<label><strong><%= t("new-topic-preview") %></strong></label>
+
+<%= partial("md.plush.html",{id_in: "content" ,id_out: "preview", title: t("new-topic-preview")}) %>
+<!--<label><%= icon("markdown-fill",2,2) %><strong><%= t("new-topic-preview") %></strong></label>
 <div  id="preview">
 
-</div>
+</div> -->
 
 <div style="margin:2rem;">
     <%= let evaluation = false

@@ -104,7 +104,7 @@ You can run `buffalo pop migrate` to initialize the forum and the content of its
 ### Access the database
 So you probably have the server up and running but have no forum to post 
 in and are unable to create forums! What a conundrum. To create a forum you need to be
-an admin. To do this you first must login to the site. After that access the site through
+an admin. To do this you first must login to the site. After that access the database through
 docker:
 ```bash
 docker exec -it forum psql -U pato -W curso

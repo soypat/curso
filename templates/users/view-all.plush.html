@@ -61,7 +61,7 @@ if (user.Role == "banned") {
             <% } %>
             <%= if (user.Role != "") {%>
             <a type="button" class="btn btn-secondary btn-sm m-0" href="<%= normalizeUserPath({uid: user.ID}) %>">
-               <span><%= icon("emoji-expressionless",1,1) %><%=t("topic-delete") %></span>
+               <%= if (user.Role!="banned") {%> <%= icon("shield-slash-fill",1,1) %> <% } else { %> <%=icon("emoji-expressionless",1,1) %>  <% } %>
             </a>
             <% } %>
         </div>

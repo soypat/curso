@@ -63,7 +63,7 @@ func TopicCreatePost(c buffalo.Context) error {
 	//}
 	_ = tx.UpdateColumns(cat, "updated_at")
 	f := c.Value("forum").(*models.Forum)
-	c.Logger().Info("TopicCreatePost finished success")
+	c.Logger().Infof("TopicCreatePost finish: %s, by %s",topic.Title,topic.Author.Email)
 	c.Flash().Add("success", T.Translate(c, "topic-add-success"))
 	return c.Redirect(302, "catPath()", render.Data{"forum_title": f.Title, "cat_title": cat.Title})
 }

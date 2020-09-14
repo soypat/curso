@@ -79,13 +79,11 @@ func editReplyPost(c buffalo.Context) error {
 
 func SetCurrentReply(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
-		//reply := &models.Reply{}
 		reply, err := loadReply(c, c.Param("rid"))
 		if err != nil {
 			c.Flash().Add("danger", T.Translate(c, "topic-not-found"))
 			return c.Error(404,err)
 		}
-		c.Logger().Infof("Reply got %s", reply)
 		c.Set("reply", reply)
 		return next(c)
 	}

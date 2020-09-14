@@ -41,7 +41,8 @@ func CursoEvaluationCreatePost(c buffalo.Context) error {
 		c.Flash().Add("danger", T.Translate(c, "curso-python-evaluation-add-fail"))
 		return c.Render(422, r.HTML("topics/create.plush.html"))
 	}
-	c.Logger().Info("CursoEvaluationCreatePost success")
+	u := c.Value("current_user").(*models.User)
+	c.Logger().Infof("evaluation create %s, by %s", eval.Title, u.Email)
 	c.Flash().Add("success", T.Translate(c, "curso-python-evaluation-add-success"))
 	return c.Render(200, r.HTML("curso/eval-get.plush.html"))
 }

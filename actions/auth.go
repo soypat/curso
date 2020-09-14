@@ -49,6 +49,7 @@ func AuthCallback(c buffalo.Context) error {
 			return errors.WithStack(err)
 		}
 	} else { // if we don't find user, create new user!
+		c.Logger().Infof("Creating new user! Email: %s",gu.Email)
 		u.Name = gu.Name
 		u.Email = gu.Email
 		u.Provider = gu.Provider
@@ -94,7 +95,6 @@ func Authorize(next buffalo.Handler) buffalo.Handler {
 			return c.Redirect(302, "/")
 		}
 		uid := unverifiedUid.(uuid.UUID)
-		c.Logger().Printf("uid:%s", uid.String())
 		tx := c.Value("tx").(*pop.Connection)
 		q := tx.Where("id = ?", uid)
 		exists, err := q.Exists("users")
@@ -120,8 +120,7 @@ func Authorize(next buffalo.Handler) buffalo.Handler {
 // If user is not logged in it does nothing.
 func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
-		c.Logger().Debug("SetCurrentUser called")
-		c.Logger().Printf("%s", c.Session().Session)
+		c.Logger().Debugf("SetCurrentUser called. Session: %s", c.Session().Session)
 		if uid := c.Session().Get(cookieUidName); uid != nil {
 			c.Logger().Debug("user id found in SetCurrentUser")
 			u := &models.User{}
@@ -158,10 +157,10 @@ func AdminAuth(next buffalo.Handler) buffalo.Handler {
 			q := tx.Where("id = ?  and role = ?", uid.(uuid.UUID).String(), "admin") // FIXME check provider too for increased security
 			exists, err := q.Exists(u)
 			if err != nil {
-				return errors.WithStack(err)
+				return c.Error(404,err)
 			}
 			if exists {
-				c.Logger().Infof("Authorized %s", u.Name)
+				c.Logger().Infof("AdminAuth success: %s", u.Email)
 				return next(c) // user has admin role
 			}
 		}

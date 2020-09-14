@@ -60,7 +60,6 @@ func InterpretPost(c buffalo.Context) error {
 func (p pythonHandler) interpretEvaluation(c buffalo.Context) error {
 	var ID big.Int
 	ID.SetString(p.Input, 10)
-	c.Logger().Printf("ID: %s", ID.String())
 	var lim big.Int
 	lim.SetString("1000", 10)
 	if p.Input == "" || len(p.Input) > 60 || ID.Cmp(&lim) == -1 || !ID.ProbablyPrime(6) {
@@ -339,7 +338,7 @@ func (p *pythonHandler) PutTx(tx *bbolt.Tx, c buffalo.Context) {
 				c.Logger().Infof("Code submitted user: %s", pc.UserName)
 				return b.Put(h.Sum(nil), buff)
 			}
-			c.Logger().Infof("Repeated code input submitted user: %s", pc.UserName)
+			c.Logger().Infof("Repeated code submitted user: %s", pc.UserName)
 			return nil
 		}()
 

@@ -16,7 +16,7 @@ import (
 // CategoriesIndex default implementation.
 func CategoriesIndex(c buffalo.Context) error {
 	catTitle := c.Param("cat_title")
-	c.Logger().Printf("accessed %s", catTitle)
+	c.Logger().Debugf("accessed %s", catTitle)
 	tx := c.Value("tx").(*pop.Connection)
 	cat := &models.Category{}
 
@@ -60,13 +60,11 @@ func CategoriesCreateGet(c buffalo.Context) error {
 func CategoriesCreatePost(c buffalo.Context) error {
 	cat := &models.Category{}
 	if err := c.Bind(cat); err != nil {
-		c.Flash().Add("danger", "could not create forum")
-		c.Logger().Printf("error: %s", err)
-		return c.Redirect(302, "")
+		c.Flash().Add("danger", "could not create category")
+		return c.Error(500,err)
 	}
-	c.Logger().Printf("T %s %s", cat.Title, cat.Description)
-	if !validURLDir(cat.Title) {
 
+	if !validURLDir(cat.Title) {
 		c.Flash().Add("danger", T.Translate(c, "category-invalid-title"))
 		return c.Redirect(302, "")
 	}
@@ -90,6 +88,8 @@ func CategoriesCreatePost(c buffalo.Context) error {
 		c.Flash().Add("danger", "Error creating category")
 		return errors.WithStack(err)
 	}
+	u := c.Value("current_user").(*models.User)
+	c.Logger().Infof("create category: %s, by %s", cat.Title, u.Email)
 	c.Flash().Add("success", fmt.Sprintf("Category %s created", cat.Title))
 	return c.Redirect(302, "forumPath()", render.Data{"forum_title": f.Title})
 }

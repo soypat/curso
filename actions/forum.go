@@ -61,9 +61,7 @@ func createForumPost(c buffalo.Context) error {
 	f := &models.Forum{}
 	if err := c.Bind(f); err != nil {
 		c.Flash().Add("danger", "could not create forum")
-		c.Logger().Printf("error: %s", err)
-		return c.Redirect(302, "/admin/f/")
-		//return c.Render(200,r.HTML("forums/create.plush.html"))
+		return c.Error(400, err)
 	}
 	b, err := getFormFile(c, "logo")
 	if err != nil {
